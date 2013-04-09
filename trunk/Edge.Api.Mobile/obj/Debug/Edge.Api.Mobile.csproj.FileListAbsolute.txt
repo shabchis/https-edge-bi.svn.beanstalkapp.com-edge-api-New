@@ -1,0 +1,13 @@
+D:\Edge\Codebase\EDGE-MERGE\edge-api\trunk\Edge.Api.Mobile\obj\Debug\Edge.Api.Mobile.csprojResolveAssemblyReference.cache
+D:\Edge\Codebase\EDGE-MERGE\edge-api\trunk\Edge.Api.Mobile\bin\Debug\Edge.Api.Mobile.dll
+D:\Edge\Codebase\EDGE-MERGE\edge-api\trunk\Edge.Api.Mobile\bin\Debug\Edge.Api.Mobile.pdb
+D:\Edge\Codebase\EDGE-MERGE\edge-api\trunk\Edge.Api.Mobile\bin\Debug\Edge.Api.dll
+D:\Edge\Codebase\EDGE-MERGE\edge-api\trunk\Edge.Api.Mobile\bin\Debug\Edge.Objects.dll
+D:\Edge\Codebase\EDGE-MERGE\edge-api\trunk\Edge.Api.Mobile\bin\Debug\Edge.Core.dll
+D:\Edge\Codebase\EDGE-MERGE\edge-api\trunk\Edge.Api.Mobile\bin\Debug\Newtonsoft.Json.dll
+D:\Edge\Codebase\EDGE-MERGE\edge-api\trunk\Edge.Api.Mobile\bin\Debug\log4net.dll
+D:\Edge\Codebase\EDGE-MERGE\edge-api\trunk\Edge.Api.Mobile\bin\Debug\Edge.Api.pdb
+D:\Edge\Codebase\EDGE-MERGE\edge-api\trunk\Edge.Api.Mobile\bin\Debug\Edge.Objects.pdb
+D:\Edge\Codebase\EDGE-MERGE\edge-api\trunk\Edge.Api.Mobile\bin\Debug\Edge.Core.pdb
+D:\Edge\Codebase\EDGE-MERGE\edge-api\trunk\Edge.Api.Mobile\obj\Debug\Edge.Api.Mobile.dll
+D:\Edge\Codebase\EDGE-MERGE\edge-api\trunk\Edge.Api.Mobile\obj\Debug\Edge.Api.Mobile.pdb
