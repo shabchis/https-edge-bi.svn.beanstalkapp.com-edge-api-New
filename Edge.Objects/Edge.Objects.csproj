@@ -60,6 +60,7 @@
     <Compile Include="CampaignStatusSchedule.cs" />
     <Compile Include="Groups.cs" />
     <Compile Include="Menu.cs" />
+    <Compile Include="Performance.cs" />
     <Compile Include="Permissions.cs" />
     <Compile Include="MapperUtility.cs" />
     <Compile Include="Refund.cs" />
@@ -68,6 +69,7 @@
     <Compile Include="ThingT.cs" />
     <Compile Include="User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utillities\MobileUtillity.cs" />
     <Compile Include="WebError.cs" />
   </ItemGroup>
   <ItemGroup>
