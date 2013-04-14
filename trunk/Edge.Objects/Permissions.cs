@@ -105,8 +105,6 @@ namespace Edge.Objects
 			ThingReader<Permission> thingReader;
 			Stack<Permission> stackPermission = new Stack<Permission>();
 
-
-
 			using (SqlConnection conn = new SqlConnection(AppSettings.GetConnectionString("Edge.Core.Data.DataManager.Connection", "String")))
 			{
 				using (SqlCommand sqlCommand = DataManager.CreateCommand(@"Permmissions_GetAllPermissions",CommandType.StoredProcedure))
