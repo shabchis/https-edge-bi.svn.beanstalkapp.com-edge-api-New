@@ -28,29 +28,32 @@ namespace Edge.Api.Mobile.Handlers
 		[UriMapping(Method = "GET", Template = "performanceroas/accounts/{accountID}/from={from}/to={to}/deposit={depositFieldName}/depositor={depositorFieldName}")]
 		public List<RoasPerformance> GetRoasPerformance(int accountID, string from, string to, string depositFieldName, string depositorFieldName)
 		{
-			IPerformanceManager manager = new MockPerformanceManager();
+			IPerformanceManager manager = new PerformanceManager();
 			DateTime fromDate;
 			DateTime toDate;
 
 			if (DateTime.TryParseExact(from, "ddMMyyyy", null, DateTimeStyles.None, out fromDate) &&
 				DateTime.TryParseExact(to, "ddMMyyyy", null, DateTimeStyles.None, out toDate))
 			{
-				return manager.GetRoasPerformance(accountID, DateTime.Now, DateTime.Now, depositFieldName, depositorFieldName);
+				return manager.GetRoasPerformance(accountID, fromDate, toDate, depositFieldName, depositorFieldName);
 			}
 			return null;
 		}
 
-		[UriMapping(Method = "GET", Template = "performancecampaign/accounts/{accountID}/from={from}/to={to}/theme={themeId}/country={countryId}")]
-		public List<CampaignPerformance> GetCampaignPerformance(int accountID, string from, string to, int themeId, string countryId)
+		[UriMapping(Method = "GET", Template = "performancecampaign/accounts/{accountID}/from={from}/to={to}/theme={theme}/country={country}")]
+		public List<CampaignPerformance> GetCampaignPerformance(int accountID, string from, string to, string theme, string country)
 		{
-			IPerformanceManager manager = new MockPerformanceManager();
+			IPerformanceManager manager = new PerformanceManager();
 			DateTime fromDate;
 			DateTime toDate;
+			int themeId;
+			int countryId;
 
 			if (DateTime.TryParseExact(from, "ddMMyyyy", null, DateTimeStyles.None, out fromDate) &&
-				DateTime.TryParseExact(to, "ddMMyyyy", null, DateTimeStyles.None, out toDate))
+				DateTime.TryParseExact(to, "ddMMyyyy", null, DateTimeStyles.None, out toDate) &&
+				int.TryParse(theme, out themeId) && int.TryParse(country, out countryId))
 			{
-				return manager.GetCampaignPerformance(accountID, DateTime.Now, DateTime.Now, themeId, countryId);
+				return manager.GetCampaignPerformance(accountID, fromDate, toDate, themeId, countryId);
 			}
 			return null;
 		} 
