@@ -51,7 +51,7 @@ namespace Edge.Api.Mobile.Performance
 			return list;
 		}
 
-		public List<CampaignPerformance> GetCampaignPerformance(int accountId, DateTime fromDate, DateTime toDate, int themeId, string countryId)
+		public List<CampaignPerformance> GetCampaignPerformance(int accountId, DateTime fromDate, DateTime toDate, int themeId, int countryId)
 		{
 			var r = new Random();
 			var list = new List<CampaignPerformance>();
