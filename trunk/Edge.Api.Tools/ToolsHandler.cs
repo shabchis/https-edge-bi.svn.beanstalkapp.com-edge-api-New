@@ -18,7 +18,6 @@ namespace Edge.Api.Tools.Handlers
 		[UriMapping(Method = "POST", Template = "tools/deleterefund", BodyParameter = "refund")] //tempurl
 		public void DeleteRefund(Refund refund)
 		{
-			
 				refund.DeleteRefund();	
 		}
 		[UriMapping(Method="GET",Template = "tools/refund")]

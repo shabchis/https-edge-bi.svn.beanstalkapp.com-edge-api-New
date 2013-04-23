@@ -65,6 +65,7 @@
     <Compile Include="MapperUtility.cs" />
     <Compile Include="Refund.cs" />
     <Compile Include="SessionData.cs" />
+    <Compile Include="Settings.cs" />
     <Compile Include="Things.cs" />
     <Compile Include="ThingT.cs" />
     <Compile Include="User.cs" />
