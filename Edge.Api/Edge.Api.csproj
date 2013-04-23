@@ -15,8 +15,10 @@
     <AssemblyName>Edge.Api</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <UseIISExpress>false</UseIISExpress>
-    <FileUpgradeFlags>0</FileUpgradeFlags>
-    <UpgradeBackupLocation>D:\Edge\Code\Codebase\EDGE-MERGE\edge-api\trunk\Backup\Edge.Api\</UpgradeBackupLocation>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
     <OldToolsVersion>4.0</OldToolsVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">

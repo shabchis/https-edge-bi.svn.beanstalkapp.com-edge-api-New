@@ -71,7 +71,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Http">
-      <HintPath>..\..\..\thirdparty\Microsoft\Microsoft.Http.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Microsoft WCF REST\WCF REST Starter Kit Preview 2\Assemblies\Microsoft.Http.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\Third Party\Newtonsoft.Json.dll</HintPath>
