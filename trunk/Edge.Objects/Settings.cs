@@ -29,13 +29,14 @@ namespace Edge.Objects
 		public string MeasureDisplayName;
 		public string MdxFieldName;
 		public int MeasureBaseID;
-
+		public bool IsDeposit { get; set; }
 
 		public BOMeasure(SqlDataReader sqlDataReader)
 		{
 			MeasureBaseID = Convert.ToInt32(sqlDataReader[0]);
 			MeasureDisplayName = Convert.ToString(sqlDataReader[2]);
 			MdxFieldName = Convert.ToString(sqlDataReader[1]);
+			IsDeposit = Convert.ToBoolean(sqlDataReader[3]);
 		}
 	}
 

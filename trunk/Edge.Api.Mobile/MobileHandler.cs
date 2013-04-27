@@ -25,8 +25,8 @@ namespace Edge.Api.Mobile.Handlers
 			return null;
 		}
 
-		[UriMapping(Method = "GET", Template = "performanceroas/accounts/{accountID}/from={from}/to={to}/deposit={depositFieldName}/depositor={depositorFieldName}")]
-		public List<RoasPerformance> GetRoasPerformance(int accountID, string from, string to, string depositFieldName, string depositorFieldName)
+		[UriMapping(Method = "GET", Template = "performanceroas/accounts/{accountID}/from={from}/to={to}")]
+		public List<RoasPerformance> GetRoasPerformance(int accountID, string from, string to)
 		{
 			IPerformanceManager manager = new PerformanceManager();
 			DateTime fromDate;
@@ -35,7 +35,7 @@ namespace Edge.Api.Mobile.Handlers
 			if (DateTime.TryParseExact(from, "ddMMyyyy", null, DateTimeStyles.None, out fromDate) &&
 				DateTime.TryParseExact(to, "ddMMyyyy", null, DateTimeStyles.None, out toDate))
 			{
-				return manager.GetRoasPerformance(accountID, fromDate, toDate, depositFieldName, depositorFieldName);
+				return manager.GetRoasPerformance(accountID, fromDate, toDate);
 			}
 			return null;
 		}

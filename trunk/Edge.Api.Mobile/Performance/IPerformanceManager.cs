@@ -10,7 +10,7 @@ namespace Edge.Api.Mobile.Performance
 	public interface IPerformanceManager
 	{
 		List<Performance7Days> GetPerformance(int accountId, DateTime fromDate, DateTime toDate);
-		List<RoasPerformance> GetRoasPerformance(int accountId, DateTime fromDate, DateTime toDate, string depositFieldName, string depositorFieldName);
+		List<RoasPerformance> GetRoasPerformance(int accountId, DateTime fromDate, DateTime toDate);
 		List<CampaignPerformance> GetCampaignPerformance(int accountId, DateTime fromDate, DateTime toDate, int themeId, int countryId);
 	}
 }

@@ -27,20 +27,19 @@ namespace Edge.Api.Mobile.Performance
 				var measureList = GetMeasures(accountId, connection);
 				if (String.IsNullOrWhiteSpace(cubeName) || measureList.Count == 0) return null;
 
-				// get relevant field names
-				var acq1Name = measureList.First(x => x.MeasureBaseID == BaseMeasure.ACQ1).MdxFieldName;
-				var acq2Name = measureList.First(x => x.MeasureBaseID == BaseMeasure.ACQ2).MdxFieldName;
-				var acq1CpaName = measureList.First(x => x.MeasureBaseID == BaseMeasure.ACQ2_CPA).MdxFieldName;
-				var acq2CpaName = measureList.First(x => x.MeasureBaseID == BaseMeasure.ACQ1_CPA).MdxFieldName;
-
 				// prepare SELECT and FROM
 				var selectClause = String.Format(@"SELECT NON EMPTY {{[Time Dim].[Time Dim].[Day]}} ON ROWS,( {{ [Measures].[Cost],[Measures].[Clicks],[Measures].[{0}], [Measures].[{1}],[Measures].[{2}],[Measures].[{3}]}} ) ON COLUMNS",
-												acq1Name, acq2Name, acq2CpaName, acq1CpaName);
+												measureList.First(x => x.MeasureBaseID == BaseMeasure.ACQ1).MdxFieldName,
+												measureList.First(x => x.MeasureBaseID == BaseMeasure.ACQ2).MdxFieldName,
+												measureList.First(x => x.MeasureBaseID == BaseMeasure.ACQ1_CPA).MdxFieldName,
+												measureList.First(x => x.MeasureBaseID == BaseMeasure.ACQ2_CPA).MdxFieldName);
+
 				var fromClause = String.Format(@"FROM [{0}] WHERE ([Accounts Dim].[Accounts].[Account].&[{1}],{{[Time Dim].[DayCode].&[{2}]:[Time Dim].[DayCode].&[{3}] }})",
 												cubeName,
 												accountId,
 												fromDate.ToString("yyyyMMdd"),
 												toDate.ToString("yyyyMMdd"));
+
 				using (var cmd = DataManager.CreateCommand("SP_ExecuteMDX", CommandType.StoredProcedure))
 				{
 					cmd.Parameters.AddWithValue("@WithMDX", " ");
@@ -63,10 +62,10 @@ namespace Edge.Api.Mobile.Performance
 									Acq2 = reader[6] != null ? Convert.ToDouble(reader[6]) : 0,
 									CPA = reader[7] != null ? Convert.ToDouble(reader[7]) : 0,
 									CPR = reader[8] != null ? Convert.ToDouble(reader[8]) : 0,
-									Acq1FieldName = acq1Name,
-									Acq2FieldName = acq2Name,
-									CPAFieldName = acq1CpaName,
-									CPRFieldName = acq2CpaName
+									Acq1FieldName = measureList.First(x => x.MeasureBaseID == BaseMeasure.ACQ1).MeasureDisplayName,
+									Acq2FieldName = measureList.First(x => x.MeasureBaseID == BaseMeasure.ACQ2).MeasureDisplayName,
+									CPAFieldName = measureList.First(x => x.MeasureBaseID == BaseMeasure.ACQ1_CPA).MeasureDisplayName,
+									CPRFieldName = measureList.First(x => x.MeasureBaseID == BaseMeasure.ACQ2_CPA).MeasureDisplayName
 								});
 						}
 						return list;
@@ -75,7 +74,7 @@ namespace Edge.Api.Mobile.Performance
 			}
 		}
 
-		public List<RoasPerformance> GetRoasPerformance(int accountId, DateTime fromDate, DateTime toDate, string depositFieldName, string depositorFieldName)
+		public List<RoasPerformance> GetRoasPerformance(int accountId, DateTime fromDate, DateTime toDate)
 		{
 			using (var connection = new SqlConnection(AppSettings.GetConnectionString("Edge.Core.Data.DataManager.Connection", "String")))
 			{
@@ -83,17 +82,22 @@ namespace Edge.Api.Mobile.Performance
 
 				// get cube name and relevant measure config foe preparing MDX command
 				var cubeName = GetAccountCubeName(accountId, connection);
-				if (String.IsNullOrWhiteSpace(cubeName)) return null;
+				var measureList = GetMeasures(accountId, connection);
+				if (String.IsNullOrWhiteSpace(cubeName) || measureList.Count == 0) return null;
 
 				// prepare WITH, SELECT and FROM
-				var withClause = String.Format("WITH MEMBER [%ROAS] AS [Measures].[{0}]/ IIF([Measures].[Cost] = 0, NULL, [Measures].[Cost] ) * 100 ", depositFieldName);
+				var withClause = String.Format("WITH MEMBER [%ROAS] AS [Measures].[{0}]/ IIF([Measures].[Cost] = 0, NULL, [Measures].[Cost] ) * 100 ", measureList.First(x => x.IsDeposit).MdxFieldName);
+				
 				var selectClause = String.Format(@"SELECT ClosingPeriod([Time Dim].[Time Dim].[Month], [Time Dim].[Time Dim].CurrentMember).Lag(12) : ClosingPeriod([Time Dim].[Time Dim].[Month], [Time Dim].[Time Dim].CurrentMember) ON ROWS, ({{[Measures].[Cost],[Measures].[{0}],[%ROAS],[Measures].[Regs],[Measures].[Actives],[Measures].[{1}]}}) ON COLUMNS",
-												depositFieldName, depositorFieldName);
+												measureList.First(x => x.IsDeposit).MdxFieldName,
+												measureList.First(x => x.MeasureBaseID == BaseMeasure.ACQ2).MdxFieldName);
+
 				var fromClause = String.Format(@"FROM [{0}] WHERE ([Accounts Dim].[Accounts].[Account].&[{1}],{{[Time Dim].[DayCode].&[{2}]:[Time Dim].[DayCode].&[{3}]}})",
 												cubeName,
 												accountId,
 												fromDate.ToString("yyyyMMdd"),
 												toDate.ToString("yyyyMMdd"));
+
 				using (var cmd = DataManager.CreateCommand("SP_ExecuteMDX", CommandType.StoredProcedure))
 				{
 					cmd.Parameters.AddWithValue("@WithMDX", withClause);
@@ -134,25 +138,24 @@ namespace Edge.Api.Mobile.Performance
 				var measureList = GetMeasures(accountId, connection);
 				if (String.IsNullOrWhiteSpace(cubeName) || measureList.Count == 0) return null;
 
-				// get relevant field names
-				var acq1Name = measureList.First(x => x.MeasureBaseID == BaseMeasure.ACQ1).MdxFieldName;
-				var acq2Name = measureList.First(x => x.MeasureBaseID == BaseMeasure.ACQ2).MdxFieldName;
-				var acq1CpaName = measureList.First(x => x.MeasureBaseID == BaseMeasure.ACQ2_CPA).MdxFieldName;
-				var acq2CpaName = measureList.First(x => x.MeasureBaseID == BaseMeasure.ACQ1_CPA).MdxFieldName;
-
-				var thereWhere = themeId > 0 ? String.Format(",[Getways Dim].[Theme].&[{0}]", themeId) : String.Empty;
+				var themeWhere = themeId > 0 ? String.Format(",[Getways Dim].[Theme].&[{0}]", themeId) : String.Empty;
 				var countryWhere = countryId > 0 ? String.Format(",[Getways Dim].[Country].&[{0}]", countryId) : String.Empty;
 
 				// prepare SELECT and FROM
 				var selectClause = String.Format(@"SELECT NON EMPTY [Getways Dim].[Gateways].[Campaign].members ON ROWS,( {{ [Measures].[Cost],[Measures].[Clicks],[Measures].[{0}], [Measures].[{1}],[Measures].[{2}],[Measures].[{3}]}} ) ON COLUMNS",
-												acq1Name, acq2Name, acq2CpaName, acq1CpaName);
+												measureList.First(x => x.MeasureBaseID == BaseMeasure.ACQ1).MdxFieldName,
+												measureList.First(x => x.MeasureBaseID == BaseMeasure.ACQ2).MdxFieldName,
+												measureList.First(x => x.MeasureBaseID == BaseMeasure.ACQ1_CPA).MdxFieldName,
+												measureList.First(x => x.MeasureBaseID == BaseMeasure.ACQ2_CPA).MdxFieldName);
+
 				var fromClause = String.Format(@"FROM [{0}] WHERE ([Accounts Dim].[Accounts].[Account].&[{1}],{{[Time Dim].[DayCode].&[{2}]:[Time Dim].[DayCode].&[{3}]{4}{5} }})",
 												cubeName,
 												accountId,
 												fromDate.ToString("yyyyMMdd"),
 												toDate.ToString("yyyyMMdd"),
-												thereWhere,
+												themeWhere,
 												countryWhere);
+
 				using (var cmd = DataManager.CreateCommand("SP_ExecuteMDX", CommandType.StoredProcedure))
 				{
 					cmd.Parameters.AddWithValue("@WithMDX", " ");
@@ -175,10 +178,10 @@ namespace Edge.Api.Mobile.Performance
 									Acq2 = reader[5] != DBNull.Value ? Convert.ToDouble(reader[5]) : 0,
 									CPA = reader[6] != DBNull.Value ? Convert.ToDouble(reader[6]) : 0,
 									CPR = reader[7] != DBNull.Value ? Convert.ToDouble(reader[7]) : 0,
-									Acq1FieldName = acq1Name,
-									Acq2FieldName = acq2Name,
-									CPAFieldName = acq1CpaName,
-									CPRFieldName = acq2CpaName
+									Acq1FieldName = measureList.First(x => x.MeasureBaseID == BaseMeasure.ACQ1).MeasureDisplayName,
+									Acq2FieldName = measureList.First(x => x.MeasureBaseID == BaseMeasure.ACQ2).MeasureDisplayName,
+									CPAFieldName = measureList.First(x => x.MeasureBaseID == BaseMeasure.ACQ1_CPA).MeasureDisplayName,
+									CPRFieldName = measureList.First(x => x.MeasureBaseID == BaseMeasure.ACQ2_CPA).MeasureDisplayName
 								});
 						}
 						return list;
