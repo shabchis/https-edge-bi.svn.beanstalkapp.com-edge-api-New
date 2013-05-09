@@ -14,5 +14,15 @@ namespace Edge.Api.Mobile.Settings
 
 			return list;
 		}
+
+
+		public List<SegmentInfo> GetAccounts(int userId)
+		{
+			var list = new List<SegmentInfo>();
+			for (var i = 0; i < 20; i++)
+				list.Add(new SegmentInfo { Id = i, Name = String.Format("Account #{0}", i) });
+
+			return list;
+		}
 	}
 }

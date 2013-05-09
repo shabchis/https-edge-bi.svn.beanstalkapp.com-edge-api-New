@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using Edge.Core.Configuration;
 using Edge.Objects;
@@ -6,7 +7,7 @@ using Edge.Objects;
 namespace Edge.Api.Mobile.Settings
 {
 	/// <summary>
-	/// Manager for retrievals of System Settings (Measures, Themes, Countries, etc.)
+	/// Manager for retrievals of System Settings (Measures, Themes, Countries, Accounts, etc.)
 	/// </summary>
 	public class SettingsManager : ISettingsManager
 	{
@@ -26,6 +27,28 @@ namespace Edge.Api.Mobile.Settings
 					{
 						while (reader.Read())
 							list.Add(new SegmentInfo { Id = int.Parse(reader["ValueId"].ToString()), Name = reader["Value"].ToString() });
+					}
+				}
+			}
+			return list;
+		}
+
+		public List<SegmentInfo> GetAccounts(int userId)
+		{
+			var list = new List<SegmentInfo>();
+			using (var connection = new SqlConnection(AppSettings.GetConnectionString("Edge.Core.Data.DataManager.Connection", "String")))
+			{
+				using (var sqlCommand = new SqlCommand("Account_GetByUserPermission", connection))
+				{
+					sqlCommand.CommandType = CommandType.StoredProcedure;
+					sqlCommand.Parameters.AddWithValue("@userId", userId);
+					sqlCommand.Parameters.AddWithValue("@permission", "menu:Intelligence/Analysis");
+					connection.Open();
+
+					using (var reader = sqlCommand.ExecuteReader())
+					{
+						while (reader.Read())
+							list.Add(new SegmentInfo { Id = int.Parse(reader["Account_ID"].ToString()), Name = reader["Account_Name"].ToString() });
 					}
 				}
 			}
