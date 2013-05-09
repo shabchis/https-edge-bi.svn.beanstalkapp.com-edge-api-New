@@ -60,7 +60,9 @@
     <Compile Include="CampaignStatusSchedule.cs" />
     <Compile Include="Groups.cs" />
     <Compile Include="Menu.cs" />
-    <Compile Include="Performance.cs" />
+    <Compile Include="Performance\CampaignPerformance.cs" />
+    <Compile Include="Performance\DailyPerformance.cs" />
+    <Compile Include="Performance\RoasPerformance.cs" />
     <Compile Include="Permissions.cs" />
     <Compile Include="MapperUtility.cs" />
     <Compile Include="Refund.cs" />

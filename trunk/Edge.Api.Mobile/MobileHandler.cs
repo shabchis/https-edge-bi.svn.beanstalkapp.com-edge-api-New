@@ -1,59 +1,71 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Edge.Api.Handlers.Template;
 using Edge.Api.Mobile.Performance;
 using Edge.Api.Mobile.Settings;
 using Edge.Objects;
 using System.Globalization;
+using Edge.Objects.Performance;
 
 namespace Edge.Api.Mobile.Handlers
 {
 	public class MobileHandler : TemplateHandler
 	{
 		#region Performance
-		[UriMapping(Method = "GET", Template = "performance/accounts/{accountID}/from={from}/to={to}")]
-		public List<Performance7Days> GetPerformance(int accountID, string from, string to)
+		[UriMapping(Method = "GET", Template = "performance/accounts/{accountID}/from={from}/to={to}/theme={theme}/country={country}")]
+		public DailyPerformanceResponse GetPerformance(int accountID, string from, string to, string theme, string country)
 		{
 			IPerformanceManager manager = new PerformanceManager();
 			DateTime fromDate;
 			DateTime toDate;
+			var themes = theme.Split(',').ToList().ConvertAll(int.Parse);
+			var countries = country.Split(',').ToList().ConvertAll(int.Parse);
+			themes.RemoveAll(x => x < 1);
+			countries.RemoveAll(x => x < 1);
+
 			if (DateTime.TryParseExact(from, "ddMMyyyy", null, DateTimeStyles.None, out fromDate) &&
 				DateTime.TryParseExact(to, "ddMMyyyy", null, DateTimeStyles.None, out toDate))
 			{
-				return manager.GetPerformance(accountID, fromDate, toDate);
+				return manager.GetPerformance(accountID, fromDate, toDate, themes, countries);
 			}
 			return null;
 		}
 
-		[UriMapping(Method = "GET", Template = "performanceroas/accounts/{accountID}/from={from}/to={to}")]
-		public List<RoasPerformance> GetRoasPerformance(int accountID, string from, string to)
+		[UriMapping(Method = "GET", Template = "performanceroas/accounts/{accountID}/from={from}/to={to}/theme={theme}/country={country}")]
+		public List<RoasPerformance> GetRoasPerformance(int accountID, string from, string to, string theme, string country)
 		{
 			IPerformanceManager manager = new PerformanceManager();
 			DateTime fromDate;
 			DateTime toDate;
+			var themes = theme.Split(',').ToList().ConvertAll(int.Parse);
+			var countries = country.Split(',').ToList().ConvertAll(int.Parse);
+			themes.RemoveAll(x => x < 1);
+			countries.RemoveAll(x => x < 1);
 
 			if (DateTime.TryParseExact(from, "ddMMyyyy", null, DateTimeStyles.None, out fromDate) &&
 				DateTime.TryParseExact(to, "ddMMyyyy", null, DateTimeStyles.None, out toDate))
 			{
-				return manager.GetRoasPerformance(accountID, fromDate, toDate);
+				return manager.GetRoasPerformance(accountID, fromDate, toDate, themes, countries);
 			}
 			return null;
 		}
 
 		[UriMapping(Method = "GET", Template = "performancecampaign/accounts/{accountID}/from={from}/to={to}/theme={theme}/country={country}")]
-		public List<CampaignPerformance> GetCampaignPerformance(int accountID, string from, string to, string theme, string country)
+		public CampaignPerformanceResponse GetCampaignPerformance(int accountID, string from, string to, string theme, string country)
 		{
 			IPerformanceManager manager = new PerformanceManager();
 			DateTime fromDate;
 			DateTime toDate;
-			int themeId;
-			int countryId;
+			var themes = theme.Split(',').ToList().ConvertAll(int.Parse);
+			var countries = country.Split(',').ToList().ConvertAll(int.Parse);
+			themes.RemoveAll(x => x < 1);
+			countries.RemoveAll(x => x < 1);
 
 			if (DateTime.TryParseExact(from, "ddMMyyyy", null, DateTimeStyles.None, out fromDate) &&
-				DateTime.TryParseExact(to, "ddMMyyyy", null, DateTimeStyles.None, out toDate) &&
-				int.TryParse(theme, out themeId) && int.TryParse(country, out countryId))
+				DateTime.TryParseExact(to, "ddMMyyyy", null, DateTimeStyles.None, out toDate))
 			{
-				return manager.GetCampaignPerformance(accountID, fromDate, toDate, themeId, countryId);
+				return manager.GetCampaignPerformance(accountID, fromDate, toDate, themes, countries);
 			}
 			return null;
 		} 
@@ -72,6 +84,13 @@ namespace Edge.Api.Mobile.Handlers
 		{
 			ISettingsManager manager = new SettingsManager();
 			return manager.GetSegmentInfo(accountID, SegmentType.Country);
+		}
+
+		[UriMapping(Method = "GET", Template = "settings/accounts?user={userID}")]
+		public List<SegmentInfo> GetAccounts(int userID)
+		{
+			ISettingsManager manager = new SettingsManager();
+			return manager.GetAccounts(userID);
 		} 
 		#endregion
 

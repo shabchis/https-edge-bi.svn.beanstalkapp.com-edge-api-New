@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Edge.Objects;
+using Edge.Objects.Performance;
 
 namespace Edge.Api.Mobile.Performance
 {
@@ -9,8 +9,8 @@ namespace Edge.Api.Mobile.Performance
 	/// </summary>
 	public interface IPerformanceManager
 	{
-		List<Performance7Days> GetPerformance(int accountId, DateTime fromDate, DateTime toDate);
-		List<RoasPerformance> GetRoasPerformance(int accountId, DateTime fromDate, DateTime toDate);
-		List<CampaignPerformance> GetCampaignPerformance(int accountId, DateTime fromDate, DateTime toDate, int themeId, int countryId);
+		DailyPerformanceResponse GetPerformance(int accountId, DateTime fromDate, DateTime toDate, List<int> themeId, List<int> countryId);
+		List<RoasPerformance> GetRoasPerformance(int accountId, DateTime fromDate, DateTime toDate, List<int> themeId, List<int> countryId);
+		CampaignPerformanceResponse GetCampaignPerformance(int accountId, DateTime fromDate, DateTime toDate, List<int> themeId, List<int> countryId);
 	}
 }
