@@ -16,58 +16,22 @@ namespace Edge.Api.Mobile.Handlers
 		[UriMapping(Method = "GET", Template = "performance/accounts/{accountID}/from={from}/to={to}/theme={theme}/country={country}")]
 		public DailyPerformanceResponse GetPerformance(int accountID, string from, string to, string theme, string country)
 		{
-			IPerformanceManager manager = new PerformanceManager();
-			DateTime fromDate;
-			DateTime toDate;
-			var themes = theme.Split(',').ToList().ConvertAll(int.Parse);
-			var countries = country.Split(',').ToList().ConvertAll(int.Parse);
-			themes.RemoveAll(x => x < 1);
-			countries.RemoveAll(x => x < 1);
-
-			if (DateTime.TryParseExact(from, "ddMMyyyy", null, DateTimeStyles.None, out fromDate) &&
-				DateTime.TryParseExact(to, "ddMMyyyy", null, DateTimeStyles.None, out toDate))
-			{
-				return manager.GetPerformance(accountID, fromDate, toDate, themes, countries);
-			}
-			return null;
+			IPerformanceManager manager = new MockPerformanceManager();
+			return manager.GetPerformance(accountID, from, to, theme, country);
 		}
 
 		[UriMapping(Method = "GET", Template = "performanceroas/accounts/{accountID}/from={from}/to={to}/theme={theme}/country={country}")]
 		public List<RoasPerformance> GetRoasPerformance(int accountID, string from, string to, string theme, string country)
 		{
-			IPerformanceManager manager = new PerformanceManager();
-			DateTime fromDate;
-			DateTime toDate;
-			var themes = theme.Split(',').ToList().ConvertAll(int.Parse);
-			var countries = country.Split(',').ToList().ConvertAll(int.Parse);
-			themes.RemoveAll(x => x < 1);
-			countries.RemoveAll(x => x < 1);
-
-			if (DateTime.TryParseExact(from, "ddMMyyyy", null, DateTimeStyles.None, out fromDate) &&
-				DateTime.TryParseExact(to, "ddMMyyyy", null, DateTimeStyles.None, out toDate))
-			{
-				return manager.GetRoasPerformance(accountID, fromDate, toDate, themes, countries);
-			}
-			return null;
+			IPerformanceManager manager = new MockPerformanceManager();
+			return manager.GetRoasPerformance(accountID, from, to, theme, country);
 		}
 
 		[UriMapping(Method = "GET", Template = "performancecampaign/accounts/{accountID}/from={from}/to={to}/theme={theme}/country={country}")]
 		public CampaignPerformanceResponse GetCampaignPerformance(int accountID, string from, string to, string theme, string country)
 		{
-			IPerformanceManager manager = new PerformanceManager();
-			DateTime fromDate;
-			DateTime toDate;
-			var themes = theme.Split(',').ToList().ConvertAll(int.Parse);
-			var countries = country.Split(',').ToList().ConvertAll(int.Parse);
-			themes.RemoveAll(x => x < 1);
-			countries.RemoveAll(x => x < 1);
-
-			if (DateTime.TryParseExact(from, "ddMMyyyy", null, DateTimeStyles.None, out fromDate) &&
-				DateTime.TryParseExact(to, "ddMMyyyy", null, DateTimeStyles.None, out toDate))
-			{
-				return manager.GetCampaignPerformance(accountID, fromDate, toDate, themes, countries);
-			}
-			return null;
+			IPerformanceManager manager = new MockPerformanceManager();
+			return manager.GetCampaignPerformance(accountID, from, to, theme, country);
 		} 
 		#endregion
 
@@ -75,21 +39,21 @@ namespace Edge.Api.Mobile.Handlers
 		[UriMapping(Method = "GET", Template = "settings/themes?account={accountID}")]
 		public List<SegmentInfo> GetThemes(int accountID)
 		{
-			ISettingsManager manager = new SettingsManager();
+			ISettingsManager manager = new MockSettingsManager();
 			return manager.GetSegmentInfo(accountID, SegmentType.Theme);
 		}
 
 		[UriMapping(Method = "GET", Template = "settings/countries?account={accountID}")]
 		public List<SegmentInfo> GetCountries(int accountID)
 		{
-			ISettingsManager manager = new SettingsManager();
+			ISettingsManager manager = new MockSettingsManager();
 			return manager.GetSegmentInfo(accountID, SegmentType.Country);
 		}
 
 		[UriMapping(Method = "GET", Template = "settings/accounts?user={userID}")]
 		public List<SegmentInfo> GetAccounts(int userID)
 		{
-			ISettingsManager manager = new SettingsManager();
+			ISettingsManager manager = new MockSettingsManager();
 			return manager.GetAccounts(userID);
 		} 
 		#endregion

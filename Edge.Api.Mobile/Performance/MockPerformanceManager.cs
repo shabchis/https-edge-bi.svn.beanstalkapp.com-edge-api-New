@@ -8,7 +8,7 @@ namespace Edge.Api.Mobile.Performance
 {
 	public class MockPerformanceManager : IPerformanceManager
 	{
-		public DailyPerformanceResponse GetPerformance(int accountId, DateTime fromDate, DateTime toDate, List<int> themeId, List<int> countryId)
+		public DailyPerformanceResponse GetPerformance(int accountId, string fromDate, string toDate, string themes, string countries)
 		{
 			var r = new Random();
 			var list = new List<DailyPerformance>();
@@ -22,7 +22,7 @@ namespace Edge.Api.Mobile.Performance
 					CPR = (double)r.Next(1, 1000) / 100,
 					Clicks = r.Next(0, 10),
 					Cost = r.Next(0, 10),
-					Date = DateTime.Now.ToString("ddMMyyyy")
+					Date = DateTime.Now.ToString("dd/MM/yy")
 				};
 				list.Add(performance);
 			}
@@ -36,17 +36,17 @@ namespace Edge.Api.Mobile.Performance
 					PerformanceStatistics = new Dictionary<string, double>()
 				};
 
-			response.PerformanceStatistics.Add(PerformanceStatisticsKeys.TotalClicks, response.PerformanceList.Select(x => x.Clicks).Sum());
-			response.PerformanceStatistics.Add(PerformanceStatisticsKeys.TotalCost, response.PerformanceList.Select(x => x.Cost).Sum());
-			response.PerformanceStatistics.Add(PerformanceStatisticsKeys.TotalAcq1, response.PerformanceList.Select(x => x.Acq1).Sum());
-			response.PerformanceStatistics.Add(PerformanceStatisticsKeys.TotalAcq2, response.PerformanceList.Select(x => x.Acq2).Sum());
-			response.PerformanceStatistics.Add(PerformanceStatisticsKeys.TotalCPA, response.PerformanceList.Select(x => x.CPA).Sum());
-			response.PerformanceStatistics.Add(PerformanceStatisticsKeys.TotalCPR, response.PerformanceList.Select(x => x.CPR).Sum());
+			response.PerformanceStatistics.Add(PerformanceStatisticsKeys.TotalClicks, Math.Round(response.PerformanceList.Select(x => x.Clicks).Sum(), 1));
+			response.PerformanceStatistics.Add(PerformanceStatisticsKeys.TotalCost,	  Math.Round(response.PerformanceList.Select(x => x.Cost).Sum(), 1));
+			response.PerformanceStatistics.Add(PerformanceStatisticsKeys.TotalAcq1,   Math.Round(response.PerformanceList.Select(x => x.Acq1).Sum(),1));
+			response.PerformanceStatistics.Add(PerformanceStatisticsKeys.TotalAcq2,   Math.Round(response.PerformanceList.Select(x => x.Acq2).Sum(), 1));
+			response.PerformanceStatistics.Add(PerformanceStatisticsKeys.TotalCPA,    Math.Round(response.PerformanceList.Select(x => x.CPA).Sum(), 1));
+			response.PerformanceStatistics.Add(PerformanceStatisticsKeys.TotalCPR,    Math.Round(response.PerformanceList.Select(x => x.CPR).Sum(), 1));
 
 			return response;
 		}
 
-		public List<RoasPerformance> GetRoasPerformance(int accountId, DateTime fromDate, DateTime toDate, List<int> themeId, List<int> countryId)
+		public List<RoasPerformance> GetRoasPerformance(int accountId, string fromDate, string toDate, string themes, string countries)
 		{
 			var r = new Random();
 			var list = new List<RoasPerformance>();
@@ -66,7 +66,7 @@ namespace Edge.Api.Mobile.Performance
 			return list;
 		}
 
-		public CampaignPerformanceResponse GetCampaignPerformance(int accountId, DateTime fromDate, DateTime toDate, List<int> themeId, List<int> countryId)
+		public CampaignPerformanceResponse GetCampaignPerformance(int accountId, string fromDate, string toDate, string themes, string countries)
 		{
 			var r = new Random();
 			var list = new List<CampaignPerformance>();

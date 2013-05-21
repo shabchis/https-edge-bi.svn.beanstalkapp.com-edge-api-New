@@ -10,6 +10,7 @@ using Edge.Core.Utilities;
 using Edge.Core.Data;
 using System.Data.SqlClient;
 using System.Net;
+using Edge.Objects;
 
 namespace Edge.Api.Handlers.Template
 {
@@ -43,20 +44,20 @@ namespace Edge.Api.Handlers.Template
 			}
 		}
 
-
 		static Regex FindParametersRegex = new Regex(@"\{([A-Za-z_][A-Za-z_0-9]*)\}");
 		public sealed override void ProcessRequest(HttpContext context)
 		{
 			_currentContext = context;
-
 
 			if (ShouldValidateSession)
 				{
 					if (context.Request.AppRelativeCurrentExecutionFilePath.Replace("~", string.Empty).ToLower() != LogIn.ToLower())
 					{
 						int userCode;
+						ApplicationType applicationType;
+
 						string session = context.Request.Headers[SessionHeader];
-						if (String.IsNullOrEmpty(session) || !IsSessionValid(session, out userCode))
+						if (String.IsNullOrEmpty(session) || !IsSessionValid(session, out userCode, out applicationType))
 						{
 							throw new HttpException("Invalid session information",(int)HttpStatusCode.Forbidden);
 
@@ -205,48 +206,43 @@ namespace Edge.Api.Handlers.Template
 			}
 			return targetRegex;
 		}
-		private bool IsSessionValid(string session, out int userCode)
+		public static bool IsSessionValid(string session, out int userCode, out ApplicationType appType)
 		{
 			bool isValid = false;
-			int sessionID = 0;
-
-
-			
+			int sessionID;
 			userCode = -1;
-			Encryptor encryptor = new Encryptor(KeyEncrypt);
+			appType = ApplicationType.Web;
+
+			var encryptor = new Encryptor(KeyEncrypt);
 
 			try { sessionID = int.Parse(encryptor.Decrypt(session)); }
-			catch (Exception ex)
+			catch (Exception)
 			{
 				// TODO: log the real exception
 				return false;
 			}
 
-			using (SqlConnection conn=new SqlConnection( AppSettings.GetConnectionString("Edge.Core.Data.DataManager.Connection","String")))
+			using (var conn=new SqlConnection( AppSettings.GetConnectionString("Edge.Core.Data.DataManager.Connection","String")))
 			{
-				using (SqlCommand sqlCommand = DataManager.CreateCommand("Session_ValidateSession(@SessionID:Int)", System.Data.CommandType.StoredProcedure))
+				using (var sqlCommand = DataManager.CreateCommand("Session_ValidateSession(@SessionID:Int)", System.Data.CommandType.StoredProcedure))
 				{
 					sqlCommand.Connection = conn;
 					conn.Open();
 					sqlCommand.Parameters["@SessionID"].Value = sessionID;
-					using (SqlDataReader sqlDataReader = sqlCommand.ExecuteReader())
+					using (var sqlDataReader = sqlCommand.ExecuteReader())
 					{
 						if (sqlDataReader.Read())
 						{
-							isValid = System.Convert.ToBoolean(sqlDataReader[0]);
-							userCode = System.Convert.ToInt32(sqlDataReader[1]);
+							isValid = Convert.ToBoolean(sqlDataReader[0]);
+							userCode = Convert.ToInt32(sqlDataReader[1]);
+							appType = sqlDataReader.FieldCount > 2 && sqlDataReader[2] != DBNull.Value ? (ApplicationType)Enum.Parse(typeof(ApplicationType), sqlDataReader[2].ToString()) : ApplicationType.Web;
 						}
 					}
 				}
 			}
-
-
-
 			return isValid;
-
 		}
 
 		public abstract bool ShouldValidateSession { get; }
-
 	}
 }

@@ -9,8 +9,8 @@ namespace Edge.Api.Mobile.Performance
 	/// </summary>
 	public interface IPerformanceManager
 	{
-		DailyPerformanceResponse GetPerformance(int accountId, DateTime fromDate, DateTime toDate, List<int> themeId, List<int> countryId);
-		List<RoasPerformance> GetRoasPerformance(int accountId, DateTime fromDate, DateTime toDate, List<int> themeId, List<int> countryId);
-		CampaignPerformanceResponse GetCampaignPerformance(int accountId, DateTime fromDate, DateTime toDate, List<int> themeId, List<int> countryId);
+		DailyPerformanceResponse GetPerformance(int accountId, string fromDate, string toDate, string themes, string countries);
+		List<RoasPerformance> GetRoasPerformance(int accountId, string fromDate, string toDate, string themes, string countries);
+		CampaignPerformanceResponse GetCampaignPerformance(int accountId, string fromDate, string toDate, string themes, string countries);
 	}
 }
