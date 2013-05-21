@@ -22,20 +22,17 @@ namespace Edge.Api.Handlers
 			get { return true; }
 		}
 
-
 		#region Login
 		[UriMapping(Method = "POST", Template = "sessions", BodyParameter = "sessionData")]
 		public SessionResponseData LogIn(SessionRequestData sessionData)
 		{
-			SqlCommand sqlCommand;
 			SessionResponseData returnsessionData = null;
-			int session;
 			try
 			{
-				using (SqlConnection conn = new SqlConnection(AppSettings.GetConnectionString("Edge.Core.Data.DataManager.Connection", "String")))
+				using (var conn = new SqlConnection(AppSettings.GetConnectionString("Edge.Core.Data.DataManager.Connection", "String")))
 				{
-					Encryptor encryptor = new Encryptor(KeyEncrypt);
-					sqlCommand = DataManager.CreateCommand("User_Login(@OperationType:Int,@Email:NVarchar,@Password:NVarchar,@UserID:Int,@SessionID:Int)", CommandType.StoredProcedure);
+					var encryptor = new Encryptor(KeyEncrypt);
+					var sqlCommand = DataManager.CreateCommand("User_Login(@OperationType:Int,@Email:NVarchar,@Password:NVarchar,@UserID:Int,@SessionID:Int,@ApplicationType:NVarchar)", CommandType.StoredProcedure);
 					sqlCommand.Connection = conn;
 					conn.Open();
 
@@ -44,11 +41,11 @@ namespace Edge.Api.Handlers
 					{
 						sqlCommand.Parameters["@Email"].Value = sessionData.Email;
 						sqlCommand.Parameters["@Password"].Value = sessionData.Password;
+						sqlCommand.Parameters["@ApplicationType"].Value = sessionData.ApplicationType;
 					}
 					else
 					{
 						sqlCommand.Parameters["@UserID"].Value = sessionData.UserID;
-
 						try
 						{
 							sqlCommand.Parameters["@SessionID"].Value = encryptor.Decrypt(sessionData.Session);
@@ -56,14 +53,12 @@ namespace Edge.Api.Handlers
 						catch (Exception ex)
 						{
 							throw new Exception("Invalid Session,session could no be parse!");
-
-
 						}
 					}
-					SqlDataReader sqlReader = sqlCommand.ExecuteReader();
+					var sqlReader = sqlCommand.ExecuteReader();
 					if (sqlReader.Read())
 					{
-						session = Convert.ToInt32(sqlReader[0]);
+						var session = Convert.ToInt32(sqlReader[0]);
 						if (session > 0)
 						{
 							returnsessionData = new SessionResponseData();
@@ -80,7 +75,6 @@ namespace Edge.Api.Handlers
 
 				throw new Exception(ex.Message);
 			}
-
 			return returnsessionData;
 		}
 		#endregion
@@ -235,11 +229,10 @@ namespace Edge.Api.Handlers
 		[UriMapping(Method = "GET", Template = "users/{ID}")]
 		public User GetUserByID(int ID)
 		{
-			
 			User returnUser = null;
 
 			int currentUser;
-			currentUser = System.Convert.ToInt32(CurrentContext.Request.Headers["edge-user-id"]);
+			currentUser = Convert.ToInt32(CurrentContext.Request.Headers["edge-user-id"]);
 			
 			if ( ID != currentUser)
 			{
@@ -269,9 +262,8 @@ namespace Edge.Api.Handlers
 			User user = User.GetUserByID(currentUser);
 			if (user.IsAcountAdmin != true)
 				throw new HttpStatusException("Only Account Administrator, can get user that is diffrent then current user!", HttpStatusCode.Forbidden);
+			
 			users = User.GetAllUsers();
-
-
 			return users;
 		}
 
@@ -286,10 +278,9 @@ namespace Edge.Api.Handlers
 			User activeUser = User.GetUserByID(currentUser);
 			if (activeUser.IsAcountAdmin != true)
 				throw new HttpStatusException("Only Account Administrator, can add users ", HttpStatusCode.Forbidden);
+			
 			userID = user.UserOperations(SqlOperation.Insert);
-
 			return userID;
-
 		}
 
 		[UriMapping(Method = "PUT", Template = "users/{ID}", BodyParameter = "user")]
@@ -307,11 +298,7 @@ namespace Edge.Api.Handlers
 				throw new HttpStatusException("Only Account Administrator, can updated users", HttpStatusCode.Forbidden);
 
 			userID = user.UserOperations(SqlOperation.Update);
-
 			return userID;
-
-
-
 		}
 
 		[UriMapping(Method = "DELETE", Template = "users/{ID}")]
@@ -328,7 +315,6 @@ namespace Edge.Api.Handlers
 			userID = user.UserOperations(SqlOperation.Delete);
 
 			return userID;
-
 		}
 		/*AssignGroupToUser
 		[UriMapping(Method = "POST", Template = "users/{userID}/groups/{groupID}")]
@@ -371,9 +357,7 @@ namespace Edge.Api.Handlers
 					{
 						associateGroups.Add((Group)thingReader.Current);
 					}
-
 				}
-
 			}
 			return associateGroups;
 		}
@@ -381,10 +365,6 @@ namespace Edge.Api.Handlers
 		[UriMapping(Method = "GET", Template = "users/{ID}/calculatedpermissions")]
 		public Dictionary<int, List<CalculatedPermission>> GetCalculatedPermissions(int ID) //TODO: CHANGE TO GET
 		{
-
-			
-
-
 			int currentUser;
 			ThingReader<CalculatedPermission> calculatedPermissionReader;
 			currentUser = ID;
@@ -404,9 +384,6 @@ namespace Edge.Api.Handlers
 					}
 					calculatedPermissionDic[calculatedPermissionReader.Current.AccountID].Add(calculatedPermissionReader.Current);
 				}
-				
-
-
 			}
 			return calculatedPermissionDic;
 		}
@@ -416,9 +393,6 @@ namespace Edge.Api.Handlers
 		{
 			User user = User.GetUserByID(ID);
 			user.ChangePasswords(password);
-
-
-
 		}
 
 		#endregion
@@ -567,12 +541,6 @@ namespace Edge.Api.Handlers
 
 
 		#endregion
-
-
-
-
-
-
 
 		public bool enabeld { get; set; }
 	}

@@ -21,6 +21,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Edge.Core", "..\..\edge-fra
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Edge.Api.Mobile", "Edge.Api.Mobile\Edge.Api.Mobile.csproj", "{745E7BCD-6731-4309-B163-BB0E96AFA39E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Edge.WebApi.Mobile", "Edge.WebApi.Mobile\Edge.WebApi.Mobile.csproj", "{C7C362E0-566B-42D0-8637-7579FAABBE7A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -102,6 +104,16 @@ Global
 		{745E7BCD-6731-4309-B163-BB0E96AFA39E}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{745E7BCD-6731-4309-B163-BB0E96AFA39E}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{745E7BCD-6731-4309-B163-BB0E96AFA39E}.Release|x86.ActiveCfg = Release|Any CPU
+		{C7C362E0-566B-42D0-8637-7579FAABBE7A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C7C362E0-566B-42D0-8637-7579FAABBE7A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C7C362E0-566B-42D0-8637-7579FAABBE7A}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{C7C362E0-566B-42D0-8637-7579FAABBE7A}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{C7C362E0-566B-42D0-8637-7579FAABBE7A}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{C7C362E0-566B-42D0-8637-7579FAABBE7A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C7C362E0-566B-42D0-8637-7579FAABBE7A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C7C362E0-566B-42D0-8637-7579FAABBE7A}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{C7C362E0-566B-42D0-8637-7579FAABBE7A}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{C7C362E0-566B-42D0-8637-7579FAABBE7A}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -113,6 +125,7 @@ Global
 		{921CBDEB-2148-4347-AB29-E74BAB5DCC05} = {E1B2BA4F-2938-472A-A864-2C1F2FE75AD4}
 		{AA85D257-3855-40FA-984C-6FE6548B42B3} = {E1B2BA4F-2938-472A-A864-2C1F2FE75AD4}
 		{745E7BCD-6731-4309-B163-BB0E96AFA39E} = {E1B2BA4F-2938-472A-A864-2C1F2FE75AD4}
+		{C7C362E0-566B-42D0-8637-7579FAABBE7A} = {E1B2BA4F-2938-472A-A864-2C1F2FE75AD4}
 		{BBE71D21-ABB9-4675-898F-1106FE175221} = {571950B0-FAD7-45FE-8556-5FFB57D83B05}
 	EndGlobalSection
 EndGlobal
