@@ -46,6 +46,7 @@ namespace Edge.Api.Handlers
 					else
 					{
 						sqlCommand.Parameters["@UserID"].Value = sessionData.UserID;
+						sqlCommand.Parameters["@ApplicationType"].Value = sessionData.ApplicationType;
 						try
 						{
 							sqlCommand.Parameters["@SessionID"].Value = encryptor.Decrypt(sessionData.Session);
