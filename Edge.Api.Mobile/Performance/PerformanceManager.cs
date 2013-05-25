@@ -91,12 +91,12 @@ namespace Edge.Api.Mobile.Performance
 						response.PerformanceStatistics.Add(PerformanceStatisticsKeys.TotalCPA, Math.Round(response.PerformanceList.Select(x => x.CPA).Sum(), 1));
 						response.PerformanceStatistics.Add(PerformanceStatisticsKeys.TotalCPR, Math.Round(response.PerformanceList.Select(x => x.CPR).Sum(), 1));
 
-						response.PerformanceStatistics.Add(PerformanceStatisticsKeys.AvgClicks, Math.Round(response.PerformanceList.Select(x => x.Clicks).Average(), 1));
-						response.PerformanceStatistics.Add(PerformanceStatisticsKeys.AvgCost, Math.Round(response.PerformanceList.Select(x => x.Cost).Average(), 1));
-						response.PerformanceStatistics.Add(PerformanceStatisticsKeys.AvgAcq1, Math.Round(response.PerformanceList.Select(x => x.Acq1).Average(), 1));
-						response.PerformanceStatistics.Add(PerformanceStatisticsKeys.AvgAcq2, Math.Round(response.PerformanceList.Select(x => x.Acq2).Average(), 1));
-						response.PerformanceStatistics.Add(PerformanceStatisticsKeys.AvgCPA, Math.Round(response.PerformanceList.Select(x => x.CPA).Average(), 1));
-						response.PerformanceStatistics.Add(PerformanceStatisticsKeys.AvgCPR, Math.Round(response.PerformanceList.Select(x => x.CPR).Average(), 1));
+						response.PerformanceStatistics.Add(PerformanceStatisticsKeys.AvgClicks, response.PerformanceList.Count > 0 ? Math.Round(response.PerformanceList.Select(x => x.Clicks).Average(), 1) : 0);
+						response.PerformanceStatistics.Add(PerformanceStatisticsKeys.AvgCost, response.PerformanceList.Count > 0 ? Math.Round(response.PerformanceList.Select(x => x.Cost).Average(), 1) : 0);
+						response.PerformanceStatistics.Add(PerformanceStatisticsKeys.AvgAcq1, response.PerformanceList.Count > 0 ? Math.Round(response.PerformanceList.Select(x => x.Acq1).Average(), 1) : 0);
+						response.PerformanceStatistics.Add(PerformanceStatisticsKeys.AvgAcq2, response.PerformanceList.Count > 0 ? Math.Round(response.PerformanceList.Select(x => x.Acq2).Average(), 1) : 0);
+						response.PerformanceStatistics.Add(PerformanceStatisticsKeys.AvgCPA, response.PerformanceList.Count > 0 ? Math.Round(response.PerformanceList.Select(x => x.CPA).Average(), 1) : 0);
+						response.PerformanceStatistics.Add(PerformanceStatisticsKeys.AvgCPR, response.PerformanceList.Count > 0 ? Math.Round(response.PerformanceList.Select(x => x.CPR).Average(), 1) : 0);
 
 						return response;
 					}
