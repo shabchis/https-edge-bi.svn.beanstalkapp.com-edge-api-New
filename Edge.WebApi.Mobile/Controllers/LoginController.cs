@@ -1,4 +1,5 @@
-﻿using System.Web.Http;
+﻿using System;
+using System.Web.Http;
 using Edge.Api.Handlers;
 using Edge.Objects;
 
@@ -7,7 +8,7 @@ namespace Edge.WebApi.Mobile.Controllers
 	public class LoginController : ApiController
 	{
 		//public SessionResponseData LogIn(SessionRequestData sessionData)
-		public SessionResponseData GetLoginInfo(string email = "", string password = "", 
+		public ExtendedSessionResponseData GetLoginInfo(string email = "", string password = "", 
 										 int userId=0, string sessionId = "", 
 										 OperationTypeEnum operationType = OperationTypeEnum.New, 
 										 ApplicationType applicationType = ApplicationType.Mobile )
@@ -23,7 +24,15 @@ namespace Edge.WebApi.Mobile.Controllers
 				};
 
 			var handler = new CoreHandler();
-			return handler.LogIn(sessionData);
+			try
+			{
+				var response = handler.LogIn(sessionData);
+				return new ExtendedSessionResponseData {UserID = response.UserID, Session = response.Session};
+			}
+			catch (Exception ex)
+			{
+				return new ExtendedSessionResponseData {HasError = true, ErrorMsg = ex.Message};
+			}
 		}
 	}
 }

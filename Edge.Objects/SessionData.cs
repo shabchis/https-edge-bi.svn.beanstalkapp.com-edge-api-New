@@ -23,6 +23,12 @@ namespace Edge.Objects
 		public string Session { get; set; }
 	}
 
+	public class ExtendedSessionResponseData : SessionResponseData
+	{
+		public bool HasError { get; set; }
+		public string ErrorMsg { get; set; }
+	}
+
 	public enum OperationTypeEnum
 	{
 		New,
