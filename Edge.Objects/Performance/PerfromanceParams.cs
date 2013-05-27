@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using Edge.Core.Configuration;
 
 namespace Edge.Objects.Performance
 {
@@ -28,6 +29,20 @@ namespace Edge.Objects.Performance
 			catch (Exception ex)
 			{
 				throw new ArgumentException(String.Format("Wrong parameters format: dates=ddMMyyyy, lists=INTs seperated by comma, ex: {0}", ex.Message));
+			}
+			CheckTimeRange();
+		}
+
+		private void CheckTimeRange()
+		{
+			var maxTimerange = 0;
+			if (int.TryParse(AppSettings.Get("MobileApi", "MaxTimeRange", false), out maxTimerange))
+			{
+				var daysDiff = ToDate.Subtract(FromDate).TotalDays;
+				if (maxTimerange > 0 && maxTimerange < daysDiff)
+				{
+					throw new ArgumentException(String.Format("Invalid date parameters, max time range allowed is {0} days. To exceed please change in configuration.", maxTimerange));
+				}
 			}
 		}
 	}
