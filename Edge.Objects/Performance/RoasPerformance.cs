@@ -1,4 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿using System.Collections.Generic;
+using System.Runtime.Serialization;
 
 namespace Edge.Objects.Performance
 {
@@ -27,5 +28,12 @@ namespace Edge.Objects.Performance
 		[DataMember]
 		[FieldMap("CostTotalPercentage")]
 		public double CostTotalPercentage;
+	}
+
+	public class RoasPerformanceResponse : BaseResponse
+	{
+		[DataMember]
+		[FieldMap("PerformanceList")]
+		public List<RoasPerformance> PerformanceList;
 	}
 }

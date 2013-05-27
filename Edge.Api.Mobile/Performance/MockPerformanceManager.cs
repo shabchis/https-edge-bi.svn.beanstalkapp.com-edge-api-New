@@ -46,7 +46,7 @@ namespace Edge.Api.Mobile.Performance
 			return response;
 		}
 
-		public List<RoasPerformance> GetRoasPerformance(int accountId, string fromDate, string toDate, string themes, string countries)
+		public RoasPerformanceResponse GetRoasPerformance(int accountId, string fromDate, string toDate, string themes, string countries)
 		{
 			var r = new Random();
 			var list = new List<RoasPerformance>();
@@ -63,7 +63,7 @@ namespace Edge.Api.Mobile.Performance
 				};
 				list.Add(performance);
 			}
-			return list;
+			return new RoasPerformanceResponse {PerformanceList = list};
 		}
 
 		public CampaignPerformanceResponse GetCampaignPerformance(int accountId, string fromDate, string toDate, string themes, string countries)

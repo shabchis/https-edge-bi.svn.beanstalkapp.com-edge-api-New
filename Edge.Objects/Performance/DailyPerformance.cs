@@ -34,7 +34,7 @@ namespace Edge.Objects.Performance
 		public double CPR;
 	}
 
-	public class DailyPerformanceResponse
+	public class DailyPerformanceResponse : BaseResponse
 	{
 		[DataMember]
 		[FieldMap("PerformanceList")]

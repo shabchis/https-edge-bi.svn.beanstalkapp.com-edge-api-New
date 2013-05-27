@@ -60,6 +60,7 @@
     <Compile Include="CampaignStatusSchedule.cs" />
     <Compile Include="Groups.cs" />
     <Compile Include="Menu.cs" />
+    <Compile Include="Performance\BaseResponse.cs" />
     <Compile Include="Performance\CampaignPerformance.cs" />
     <Compile Include="Performance\DailyPerformance.cs" />
     <Compile Include="Performance\PerfromanceParams.cs" />

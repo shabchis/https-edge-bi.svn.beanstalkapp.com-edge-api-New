@@ -10,7 +10,7 @@ namespace Edge.Objects.Performance
 		public string CampaignName;
 	}
 
-	public class CampaignPerformanceResponse
+	public class CampaignPerformanceResponse : BaseResponse
 	{
 		[DataMember]
 		[FieldMap("PerformanceList")]
