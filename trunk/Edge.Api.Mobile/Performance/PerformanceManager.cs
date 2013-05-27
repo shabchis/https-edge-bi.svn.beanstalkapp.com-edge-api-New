@@ -65,12 +65,12 @@ namespace Edge.Api.Mobile.Performance
 							list.Add(new DailyPerformance
 								{
 									Date   = reader[2] != DBNull.Value ? DateTime.ParseExact(reader[2].ToString(), "dd/MM/yyyy", null, DateTimeStyles.None).ToString("dd/MM/yy") : String.Empty,
-									Cost   = reader[3] != DBNull.Value ? Convert.ToDouble(reader[3]) : 0,
-									Clicks = reader[4] != DBNull.Value ? Convert.ToDouble(reader[4]) : 0,
-									Acq1   = reader[5] != DBNull.Value ? Convert.ToDouble(reader[5]) : 0,
-									Acq2   = reader[6] != DBNull.Value ? Convert.ToDouble(reader[6]) : 0,
-									CPA    = reader[7] != DBNull.Value ? Convert.ToDouble(reader[7]) : 0,
-									CPR    = reader[8] != DBNull.Value ? Convert.ToDouble(reader[8]) : 0,
+									Cost   = reader[3] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[3]),1) : 0,
+									Clicks = reader[4] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[4]),1) : 0,
+									Acq1   = reader[5] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[5]),1) : 0,
+									Acq2   = reader[6] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[6]),1) : 0,
+									CPA    = reader[7] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[7]),1) : 0,
+									CPR    = reader[8] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[8]),1) : 0,
 								});
 						}
 						// prepare response
@@ -104,7 +104,7 @@ namespace Edge.Api.Mobile.Performance
 			}
 		}
 
-		public List<RoasPerformance> GetRoasPerformance(int accountId, string from, string to, string themes, string countries)
+		public RoasPerformanceResponse GetRoasPerformance(int accountId, string from, string to, string themes, string countries)
 		{
 			var perfParam = new PerfromanceParams(accountId, from, to, themes, countries);
 			using (var connection = new SqlConnection(AppSettings.GetConnectionString("Edge.Core.Data.DataManager.Connection", "String")))
@@ -127,9 +127,11 @@ namespace Edge.Api.Mobile.Performance
 				// prepare WITH, SELECT and FROM
 				var withClause = String.Format("WITH MEMBER [%ROAS] AS [Measures].[{0}]/ IIF([Measures].[Cost] = 0, NULL, [Measures].[Cost] ) * 100 ", measureList.First(x => x.IsDeposit).MdxFieldName);
 				
-				var selectClause = String.Format(@"SELECT ClosingPeriod([Time Dim].[Time Dim].[Month], [Time Dim].[Time Dim].CurrentMember).Lag(12) : ClosingPeriod([Time Dim].[Time Dim].[Month], [Time Dim].[Time Dim].CurrentMember) ON ROWS, ({{[Measures].[Cost],[Measures].[{0}],[%ROAS],[Measures].[Regs],[Measures].[Actives],[Measures].[{1}]}}) ON COLUMNS",
+				var selectClause = String.Format(@"SELECT ClosingPeriod([Time Dim].[Time Dim].[Month], [Time Dim].[Time Dim].CurrentMember).Lag(12) : ClosingPeriod([Time Dim].[Time Dim].[Month], [Time Dim].[Time Dim].CurrentMember) ON ROWS, 
+												   ({{[Measures].[Cost],[Measures].[{0}],[%ROAS],[Measures].[{1}], [Measures].[{2}]}}) ON COLUMNS",
 												measureList.First(x => x.IsDeposit).MdxFieldName,
-												measureList.First(x => x.MeasureBaseID == BaseMeasure.ACQ2).MdxFieldName);
+												measureList.First(x => x.MeasureBaseID == BaseMeasure.ACQ2).MdxFieldName,
+												measureList.First(x => x.MeasureBaseID == BaseMeasure.ACQ2_CPA).MdxFieldName);
 
 				var fromClause = String.Format(@"FROM [{0}] WHERE ([Accounts Dim].[Accounts].[Account].&[{1}],{4}{5}{{[Time Dim].[DayCode].&[{2}]:[Time Dim].[DayCode].&[{3}]}})",
 												cubeName,
@@ -154,15 +156,15 @@ namespace Edge.Api.Mobile.Performance
 						{
 							list.Add(new RoasPerformance
 							{
-								Month = reader[1] != DBNull.Value ? reader[1].ToString() : String.Empty,
-								Cost = reader[2] != DBNull.Value ? Convert.ToDouble(reader[2]) : 0,
-								TotalDeposit = reader[3] != DBNull.Value ? Convert.ToDouble(reader[3]) : 0,
-								TotalDepositors = reader[4] != DBNull.Value ? Convert.ToDouble(reader[4]) : 0,
-								RoasPercentage = reader[5] != DBNull.Value ? Convert.ToDouble(reader[5]) : 0,
-								CostTotalPercentage = reader[6] != DBNull.Value ? Convert.ToDouble(reader[6]) : 0
+								Month				= reader[1] != DBNull.Value ? reader[1].ToString() : String.Empty,
+								Cost				= reader[2] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[2]),1) : 0,
+								TotalDeposit		= reader[3] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[3]),1) : 0,
+								TotalDepositors		= reader[4] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[4]),1) : 0,
+								RoasPercentage		= reader[5] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[5]),1) : 0,
+								CostTotalPercentage = reader[6] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[6]),1) : 0
 							});
 						}
-						return list;
+						return new RoasPerformanceResponse {PerformanceList = list};
 					}
 				}
 			}
@@ -216,12 +218,12 @@ namespace Edge.Api.Mobile.Performance
 							list.Add(new CampaignPerformance
 								{
 									CampaignName = reader[1] != DBNull.Value ? reader[1].ToString() : String.Empty,
-									Cost = reader[2] != DBNull.Value ? Convert.ToDouble(reader[2]) : 0,
-									Clicks = reader[3] != DBNull.Value ? Convert.ToDouble(reader[3]) : 0,
-									Acq1 = reader[4] != DBNull.Value ? Convert.ToDouble(reader[4]) : 0,
-									Acq2 = reader[5] != DBNull.Value ? Convert.ToDouble(reader[5]) : 0,
-									CPA = reader[6] != DBNull.Value ? Convert.ToDouble(reader[6]) : 0,
-									CPR = reader[7] != DBNull.Value ? Convert.ToDouble(reader[7]) : 0,
+									Cost	= reader[2] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[2]),1) : 0,
+									Clicks	= reader[3] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[3]),1) : 0,
+									Acq1	= reader[4] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[4]),1) : 0,
+									Acq2	= reader[5] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[5]),1) : 0,
+									CPA		= reader[6] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[6]),1) : 0,
+									CPR		= reader[7] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[7]), 1) : 0,
 								});
 						}
 						var response = new CampaignPerformanceResponse

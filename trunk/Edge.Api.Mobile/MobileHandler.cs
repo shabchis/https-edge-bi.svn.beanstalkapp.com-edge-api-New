@@ -21,7 +21,7 @@ namespace Edge.Api.Mobile.Handlers
 		}
 
 		[UriMapping(Method = "GET", Template = "performanceroas/accounts/{accountID}/from={from}/to={to}/theme={theme}/country={country}")]
-		public List<RoasPerformance> GetRoasPerformance(int accountID, string from, string to, string theme, string country)
+		public RoasPerformanceResponse GetRoasPerformance(int accountID, string from, string to, string theme, string country)
 		{
 			IPerformanceManager manager = new MockPerformanceManager();
 			return manager.GetRoasPerformance(accountID, from, to, theme, country);

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Web.Http;
 using Edge.Api.Mobile.Performance;
 using Edge.Core.Configuration;
@@ -9,30 +10,52 @@ namespace Edge.WebApi.Mobile.Controllers
 	public class PerformanceController : BaseController
 	{
 		[ActionName("DailyPerformance")]
-		public DailyPerformanceResponse GetPerformance(string sessionId, int accountID, string from, string to, string theme="", string country="")
+		public DailyPerformanceResponse GetPerformance(string sessionId, int accountId, string from, string to, string theme="", string country="")
 		{
-			ValidateSession(sessionId);
+			try
+			{
+				ValidateSession(sessionId);
 
-			var manager = GetManager();
-			return manager.GetPerformance(accountID, from, to, theme, country);
+				var manager = GetManager();
+				return manager.GetPerformance(accountId, from, to, theme, country);
+			}
+			catch (Exception ex)
+			{
+				return new DailyPerformanceResponse { HasError = true, ErrorMsg = ex.Message };
+			}
+
 		}
 
 		[ActionName("RoasPerformance")]
-		public List<RoasPerformance> GetRoasPerformance(string sessionId, int accountID, string from, string to, string theme = "", string country = "")
+		public RoasPerformanceResponse GetRoasPerformance(string sessionId, int accountId, string from, string to, string theme = "", string country = "")
 		{
-			ValidateSession(sessionId);
+			try
+			{
+				ValidateSession(sessionId);
 
-			var manager = GetManager();
-			return manager.GetRoasPerformance(accountID, from, to, theme, country);
+				var manager = GetManager();
+				return manager.GetRoasPerformance(accountId, from, to, theme, country);
+			}
+			catch (Exception ex)
+			{
+				return new RoasPerformanceResponse {HasError = true, ErrorMsg = ex.Message};
+			}
 		}
 
 		[ActionName("CampaignPerformance")]
-		public CampaignPerformanceResponse GetCampaignPerformance(string sessionId, int accountID, string from, string to, string theme = "", string country = "")
+		public CampaignPerformanceResponse GetCampaignPerformance(string sessionId, int accountId, string from, string to, string theme = "", string country = "")
 		{
-			ValidateSession(sessionId);
+			try
+			{
+				ValidateSession(sessionId);
 
-			var manager = GetManager();
-			return manager.GetCampaignPerformance(accountID, from, to, theme, country);
+				var manager = GetManager();
+				return manager.GetCampaignPerformance(accountId, from, to, theme, country);
+			}
+			catch (Exception ex)
+			{
+				return new CampaignPerformanceResponse { HasError = true, ErrorMsg = ex.Message };
+			}
 		}
 
 		#region Private Methods
@@ -45,7 +68,5 @@ namespace Edge.WebApi.Mobile.Controllers
 			return new PerformanceManager();
 		}
 		#endregion
-
-		
 	}
 }
