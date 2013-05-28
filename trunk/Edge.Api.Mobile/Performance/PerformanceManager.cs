@@ -20,7 +20,7 @@ namespace Edge.Api.Mobile.Performance
 		#region Public Methods
 		public DailyPerformanceResponse GetPerformance(int accountId, string from, string to, string themes, string countries)
 		{
-			var perfParam = new PerfromanceParams(accountId, from, to, themes, countries);
+			var perfParam = new PerfromanceParams(accountId, from, to, themes, countries, PerformanceReportType.DailyPerformance);
 			using (var connection = new SqlConnection(AppSettings.GetConnectionString("Edge.Core.Data.DataManager.Connection", "String")))
 			{
 				connection.Open();
@@ -106,7 +106,7 @@ namespace Edge.Api.Mobile.Performance
 
 		public RoasPerformanceResponse GetRoasPerformance(int accountId, string from, string to, string themes, string countries)
 		{
-			var perfParam = new PerfromanceParams(accountId, from, to, themes, countries);
+			var perfParam = new PerfromanceParams(accountId, from, to, themes, countries, PerformanceReportType.RoasPerformance);
 			using (var connection = new SqlConnection(AppSettings.GetConnectionString("Edge.Core.Data.DataManager.Connection", "String")))
 			{
 				connection.Open();
@@ -172,7 +172,7 @@ namespace Edge.Api.Mobile.Performance
 
 		public CampaignPerformanceResponse GetCampaignPerformance(int accountId, string from, string to, string themes, string countries)
 		{
-			var perfParam = new PerfromanceParams(accountId, from, to, themes, countries);
+			var perfParam = new PerfromanceParams(accountId, from, to, themes, countries, PerformanceReportType.CampaignPerformance);
 			using (var connection = new SqlConnection(AppSettings.GetConnectionString("Edge.Core.Data.DataManager.Connection", "String")))
 			{
 				connection.Open();
