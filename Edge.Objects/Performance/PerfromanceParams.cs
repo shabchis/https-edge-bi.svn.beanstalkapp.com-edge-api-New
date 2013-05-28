@@ -16,7 +16,7 @@ namespace Edge.Objects.Performance
 		public List<int> Themes { get; set; }
 		public List<int> Countries { get; set; }
 
-		public PerfromanceParams(int accountId, string from, string to, string themes, string countries)
+		public PerfromanceParams(int accountId, string from, string to, string themes, string countries, PerformanceReportType reportType)
 		{
 			try
 			{
@@ -30,18 +30,18 @@ namespace Edge.Objects.Performance
 			{
 				throw new ArgumentException(String.Format("Wrong parameters format: dates=ddMMyyyy, lists=INTs seperated by comma, ex: {0}", ex.Message));
 			}
-			CheckTimeRange();
+			CheckTimeRange(reportType);
 		}
 
-		private void CheckTimeRange()
+		private void CheckTimeRange(PerformanceReportType reportType)
 		{
 			var maxTimerange = 0;
-			if (int.TryParse(AppSettings.Get("MobileApi", "MaxTimeRange", false), out maxTimerange))
+			if (int.TryParse(AppSettings.Get("MobileApi", String.Format("{0}MaxTimeInterval",reportType), false), out maxTimerange))
 			{
 				var daysDiff = ToDate.Subtract(FromDate).TotalDays;
 				if (maxTimerange > 0 && maxTimerange < daysDiff)
 				{
-					throw new ArgumentException(String.Format("Invalid date parameters, max time range allowed is {0} days. To exceed please change in configuration.", maxTimerange));
+					throw new ArgumentException(String.Format("Invalid date parameters, max time interval allowed for report '{1}' is {0} days. To exceed please change in configuration.", maxTimerange, reportType));
 				}
 			}
 		}

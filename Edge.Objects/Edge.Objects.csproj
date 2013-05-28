@@ -63,6 +63,7 @@
     <Compile Include="Performance\BaseResponse.cs" />
     <Compile Include="Performance\CampaignPerformance.cs" />
     <Compile Include="Performance\DailyPerformance.cs" />
+    <Compile Include="Performance\PerformanceReportType.cs" />
     <Compile Include="Performance\PerfromanceParams.cs" />
     <Compile Include="Performance\RoasPerformance.cs" />
     <Compile Include="Permissions.cs" />
