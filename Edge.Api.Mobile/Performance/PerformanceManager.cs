@@ -164,7 +164,13 @@ namespace Edge.Api.Mobile.Performance
 								CostTotalPercentage = reader[6] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[6]),1) : 0
 							});
 						}
-						return new RoasPerformanceResponse {PerformanceList = list};
+						return new RoasPerformanceResponse
+							{
+								PerformanceList = list,
+								TotalDepositFieldName = measureList.First(x => x.IsDeposit).MeasureDisplayName,
+								TotalDepositorsFieldName = measureList.First(x => x.MeasureBaseID == BaseMeasure.ACQ2).MeasureDisplayName,
+								CostTotalPercentageFieldName = measureList.First(x => x.MeasureBaseID == BaseMeasure.ACQ2_CPA).MeasureDisplayName,
+							};
 					}
 				}
 			}
