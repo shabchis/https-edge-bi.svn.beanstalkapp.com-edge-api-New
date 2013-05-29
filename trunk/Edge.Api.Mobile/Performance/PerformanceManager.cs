@@ -28,11 +28,13 @@ namespace Edge.Api.Mobile.Performance
 				// get cube name and relevant measure config foe preparing MDX command
 				var cubeName = GetAccountCubeName(accountId, connection);
 				if (String.IsNullOrWhiteSpace(cubeName)) 
-					throw new Exception(String.Format("Cannot retrieve cube name for account {0}", accountId));
+					throw new MobileApiException(String.Format("Cannot retrieve cube name for account {0}", accountId), 
+												 String.Format("No cube defined for account {0}", accountId));
 
 				var measureList = GetMeasures(accountId, connection);
 				if (measureList.Count == 0)
-					throw new Exception(String.Format("There are no defined measures for account {0}", accountId));
+					throw new MobileApiException(String.Format("There are no defined measures for account {0}", accountId),
+												 String.Format("No measures for account {0}", accountId));
 
 				// prepare SELECT and FROM
 				var selectClause = String.Format(@"SELECT NON EMPTY {{[Time Dim].[Time Dim].[Day]}} ON ROWS,( {{ [Measures].[Cost],[Measures].[Clicks],[Measures].[{0}], [Measures].[{1}],[Measures].[{2}],[Measures].[{3}]}} ) ON COLUMNS",
@@ -115,14 +117,17 @@ namespace Edge.Api.Mobile.Performance
 				// get cube name and relevant measure config foe preparing MDX command
 				var cubeName = GetAccountCubeName(accountId, connection);
 				if (String.IsNullOrWhiteSpace(cubeName))
-					throw new Exception(String.Format("Cannot retrieve cube name for account {0}", accountId));
+					throw new MobileApiException(String.Format("Cannot retrieve cube name for account {0}", accountId),
+												 String.Format("No cube defined for account {0}", accountId));
 
 				var measureList = GetMeasures(accountId, connection);
 				if (measureList.Count == 0)
-					throw new Exception(String.Format("There are no defined measures for account {0}", accountId));
+					throw new MobileApiException(String.Format("There are no defined measures for account {0}", accountId),
+												 String.Format("No measures for account {0}", accountId));
 
 				if (!measureList.Any(x => x.IsDeposit))
-					throw new Exception(String.Format("There is no deposit field defined for account {0}", accountId));
+					throw new MobileApiException(String.Format("There is no deposit field defined for account {0}", accountId),
+												 String.Format("ROAS report is not relevant for this account"));
 
 				// prepare WITH, SELECT and FROM
 				var withClause = String.Format("WITH MEMBER [%ROAS] AS [Measures].[{0}]/ IIF([Measures].[Cost] = 0, NULL, [Measures].[Cost] ) * 100 ", measureList.First(x => x.IsDeposit).MdxFieldName);
@@ -187,11 +192,13 @@ namespace Edge.Api.Mobile.Performance
 				// get cube name and relevant measure config foe preparing MDX command
 				var cubeName = GetAccountCubeName(accountId, connection);
 				if (String.IsNullOrWhiteSpace(cubeName))
-					throw new Exception(String.Format("Cannot retrieve cube name for account {0}", accountId));
+					throw new MobileApiException(String.Format("Cannot retrieve cube name for account {0}", accountId),
+												 String.Format("No cube defined for account {0}", accountId));
 
 				var measureList = GetMeasures(accountId, connection);
 				if (measureList.Count == 0)
-					throw new Exception(String.Format("There are no defined measures for account {0}", accountId));
+					throw new MobileApiException(String.Format("There are no defined measures for account {0}", accountId),
+												 String.Format("No measures for account {0}", accountId));
 
 				// prepare SELECT and FROM
 				var selectClause = String.Format(@"SELECT NON EMPTY [Getways Dim].[Gateways].[Campaign].members ON ROWS,( {{ [Measures].[Cost],[Measures].[Clicks],[Measures].[{0}], [Measures].[{1}],[Measures].[{2}],[Measures].[{3}]}} ) ON COLUMNS",

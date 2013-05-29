@@ -31,7 +31,12 @@ namespace Edge.WebApi.Mobile.Controllers
 			}
 			catch (Exception ex)
 			{
-				return new ExtendedSessionResponseData {HasError = true, ErrorMsg = ex.Message};
+				return new ExtendedSessionResponseData 
+				{
+					HasError = true, 
+					ErrorMsg = ex.Message,
+					DisplayError = (ex is MobileApiException) ? (ex as MobileApiException).DisplayMessage : null
+				};
 			}
 		}
 	}

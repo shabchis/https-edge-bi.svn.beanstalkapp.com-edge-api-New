@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Web.Http;
 using Edge.Api.Mobile.Performance;
 using Edge.Core.Configuration;
+using Edge.Objects;
 using Edge.Objects.Performance;
 
 namespace Edge.WebApi.Mobile.Controllers
@@ -21,7 +22,12 @@ namespace Edge.WebApi.Mobile.Controllers
 			}
 			catch (Exception ex)
 			{
-				return new DailyPerformanceResponse { HasError = true, ErrorMsg = ex.Message };
+				return new DailyPerformanceResponse
+				{
+					HasError = true,
+					ErrorMsg = ex.Message,
+					DisplayError = (ex is MobileApiException) ? (ex as MobileApiException).DisplayMessage : null
+				};
 			}
 
 		}
@@ -38,7 +44,12 @@ namespace Edge.WebApi.Mobile.Controllers
 			}
 			catch (Exception ex)
 			{
-				return new RoasPerformanceResponse {HasError = true, ErrorMsg = ex.Message};
+				return new RoasPerformanceResponse
+				{
+					HasError = true,
+					ErrorMsg = ex.Message,
+					DisplayError = (ex is MobileApiException) ? (ex as MobileApiException).DisplayMessage : null
+				};
 			}
 		}
 
@@ -54,7 +65,12 @@ namespace Edge.WebApi.Mobile.Controllers
 			}
 			catch (Exception ex)
 			{
-				return new CampaignPerformanceResponse { HasError = true, ErrorMsg = ex.Message };
+				return new CampaignPerformanceResponse
+				{
+					HasError = true,
+					ErrorMsg = ex.Message,
+					DisplayError = (ex is MobileApiException) ? (ex as MobileApiException).DisplayMessage : null
+				};
 			}
 		}
 
