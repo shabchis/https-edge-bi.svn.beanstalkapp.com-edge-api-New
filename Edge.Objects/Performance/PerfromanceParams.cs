@@ -27,7 +27,8 @@ namespace Edge.Objects.Performance
 			}
 			catch (Exception ex)
 			{
-				throw new ArgumentException(String.Format("Wrong parameters format: dates=ddMMyyyy, lists=INTs seperated by comma, ex: {0}", ex.Message));
+				throw new MobileApiException(String.Format("Wrong parameters format: dates=ddMMyyyy, lists=INTs seperated by comma, ex: {0}", ex.Message),
+											 "Invalid request");
 			}
 			CheckTimeRange(reportType);
 		}
@@ -40,7 +41,8 @@ namespace Edge.Objects.Performance
 				var daysDiff = ToDate.Subtract(FromDate).TotalDays;
 				if (maxTimerange > 0 && maxTimerange < daysDiff)
 				{
-					throw new ArgumentException(String.Format("Invalid date parameters, max time interval allowed for report '{1}' is {0} days. To exceed please change in configuration.", maxTimerange, reportType));
+					throw new MobileApiException(String.Format("Invalid date parameters, max time interval allowed for report '{1}' is {0} days. To exceed please change in configuration.", maxTimerange, reportType),
+												 String.Format("Invalid report parameters: max time interval is {0} days", maxTimerange));
 				}
 			}
 		}
