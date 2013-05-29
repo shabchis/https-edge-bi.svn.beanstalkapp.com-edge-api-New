@@ -35,5 +35,17 @@ namespace Edge.Objects.Performance
 		[DataMember]
 		[FieldMap("PerformanceList")]
 		public List<RoasPerformance> PerformanceList;
+
+		[DataMember]
+		[FieldMap("TotalDepositFieldName")]
+		public string TotalDepositFieldName;
+
+		[DataMember]
+		[FieldMap("TotalDepositorsFieldName")]
+		public string TotalDepositorsFieldName;
+
+		[DataMember]
+		[FieldMap("CostTotalPercentageFieldName")]
+		public string CostTotalPercentageFieldName;
 	}
 }
