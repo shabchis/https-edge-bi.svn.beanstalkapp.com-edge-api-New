@@ -6,6 +6,10 @@ namespace Edge.Objects.Performance
 	public class RoasPerformance
 	{
 		[DataMember(Order = 1)]
+		[FieldMap("Year")]
+		public string Year;
+
+		[DataMember()]
 		[FieldMap("Month")]
 		public string Month;
 

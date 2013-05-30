@@ -37,21 +37,21 @@ namespace Edge.Api.Mobile.Handlers
 
 		#region Settings
 		[UriMapping(Method = "GET", Template = "settings/themes?account={accountID}")]
-		public List<SegmentInfo> GetThemes(int accountID)
+		public SettingsResponse GetThemes(int accountID)
 		{
 			ISettingsManager manager = new MockSettingsManager();
 			return manager.GetSegmentInfo(accountID, SegmentType.Theme);
 		}
 
 		[UriMapping(Method = "GET", Template = "settings/countries?account={accountID}")]
-		public List<SegmentInfo> GetCountries(int accountID)
+		public SettingsResponse GetCountries(int accountID)
 		{
 			ISettingsManager manager = new MockSettingsManager();
 			return manager.GetSegmentInfo(accountID, SegmentType.Country);
 		}
 
 		[UriMapping(Method = "GET", Template = "settings/accounts?user={userID}")]
-		public List<SegmentInfo> GetAccounts(int userID)
+		public SettingsResponse GetAccounts(int userID)
 		{
 			ISettingsManager manager = new MockSettingsManager();
 			return manager.GetAccounts(userID);
@@ -61,8 +61,7 @@ namespace Edge.Api.Mobile.Handlers
 		#region Overrides
 		public override bool ShouldValidateSession
 		{
-			// TODO: should return true
-			get { return false; }
+			get { return true; }
 		} 
 		#endregion
 	}

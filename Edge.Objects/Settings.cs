@@ -1,4 +1,6 @@
-﻿using System;
+﻿using System.Collections.Generic;
+using Edge.Objects.Performance;
+using System;
 using System.Data.SqlClient;
 using System.Runtime.Serialization;
 
@@ -22,6 +24,11 @@ namespace Edge.Objects
 		[DataMember]
 		[FieldMap("Name")]
 		public string Name;
+	}
+
+	public class SettingsResponse : BaseResponse
+	{
+		public List<SegmentInfo> SegmentList { get; set; }
 	}
 
 	public class BOMeasure

@@ -159,15 +159,19 @@ namespace Edge.Api.Mobile.Performance
 						var list = new List<RoasPerformance>();
 						while (reader.Read())
 						{
-							list.Add(new RoasPerformance
+							if (reader[1] != DBNull.Value)
 							{
-								Month				= reader[1] != DBNull.Value ? reader[1].ToString() : String.Empty,
-								Cost				= reader[2] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[2]),1) : 0,
-								TotalDeposit		= reader[3] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[3]),1) : 0,
-								TotalDepositors		= reader[4] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[4]),1) : 0,
-								RoasPercentage		= reader[5] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[5]),1) : 0,
-								CostTotalPercentage = reader[6] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[6]),1) : 0
-							});
+								list.Add(new RoasPerformance
+								{
+									Month = reader[1].ToString().Split(' ')[0],
+									Year = reader[1].ToString().Split(' ')[1],
+									Cost = reader[2] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[2]), 1) : 0,
+									TotalDeposit = reader[3] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[3]), 1) : 0,
+									TotalDepositors = reader[4] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[4]), 1) : 0,
+									RoasPercentage = reader[5] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[5]), 1) : 0,
+									CostTotalPercentage = reader[6] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[6]), 1) : 0
+								});
+							}
 						}
 						return new RoasPerformanceResponse
 							{

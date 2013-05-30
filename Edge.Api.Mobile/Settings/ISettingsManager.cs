@@ -9,8 +9,8 @@ namespace Edge.Api.Mobile.Settings
 	public interface ISettingsManager
 	{
 		// get segments by segment type and account
-		List<SegmentInfo> GetSegmentInfo(int accountId, SegmentType segmentType);
+		SettingsResponse GetSegmentInfo(int accountId, SegmentType segmentType);
 
-		List<SegmentInfo> GetAccounts(int userId);
+		SettingsResponse GetAccounts(int userId);
 	}
 }

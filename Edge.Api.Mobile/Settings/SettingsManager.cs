@@ -11,7 +11,7 @@ namespace Edge.Api.Mobile.Settings
 	/// </summary>
 	public class SettingsManager : ISettingsManager
 	{
-		public List<SegmentInfo> GetSegmentInfo(int accountId, SegmentType segmentType)
+		public SettingsResponse GetSegmentInfo(int accountId, SegmentType segmentType)
 		{
 			var list = new List<SegmentInfo>();
 			using (var connection = new SqlConnection(AppSettings.GetConnectionString("Edge.Core.Data.DataManager.Connection", "String")))
@@ -30,10 +30,10 @@ namespace Edge.Api.Mobile.Settings
 					}
 				}
 			}
-			return list;
+			return new SettingsResponse { SegmentList = list };
 		}
 
-		public List<SegmentInfo> GetAccounts(int userId)
+		public SettingsResponse GetAccounts(int userId)
 		{
 			var list = new List<SegmentInfo>();
 			using (var connection = new SqlConnection(AppSettings.GetConnectionString("Edge.Core.Data.DataManager.Connection", "String")))
@@ -52,7 +52,7 @@ namespace Edge.Api.Mobile.Settings
 					}
 				}
 			}
-			return list;
+			return new SettingsResponse { SegmentList = list };
 		}
 	}
 }
