@@ -232,7 +232,7 @@ namespace Edge.Api.Mobile.Performance
 						var list = new List<CampaignPerformance>();
 						while (reader.Read())
 						{
-							list.Add(new CampaignPerformance
+							var performance = new CampaignPerformance
 								{
 									CampaignName = reader[1] != DBNull.Value ? reader[1].ToString() : String.Empty,
 									Cost	= reader[2] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[2]),1) : 0,
@@ -241,7 +241,10 @@ namespace Edge.Api.Mobile.Performance
 									Acq2	= reader[5] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[5]),1) : 0,
 									CPA		= reader[6] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[6]),1) : 0,
 									CPR		= reader[7] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[7]), 1) : 0,
-								});
+								};
+							// add perfrmance to list only if it has at least ont value
+							if (performance.Cost > 0 || performance.Clicks > 0 || performance.Acq1 > 0 || performance.Acq2 > 0 || performance.CPA > 0 || performance.CPR > 0)
+								list.Add(performance);
 						}
 						var response = new CampaignPerformanceResponse
 						{
