@@ -123,7 +123,7 @@ namespace Edge.Api.Mobile.Performance
 				var measureList = GetMeasures(accountId, connection);
 				if (!measureList.Any(x => x.IsDeposit))
 					throw new MobileApiException(String.Format("There is no deposit field defined for account {0}", accountId),
-												 String.Format("ROAS report is not relevant for this account")); 
+												 String.Format("ROAS report is not relevant for account {0}", accountId)); 
 				
 				if (measureList.Count == 0 || measureList.Any(x => String.IsNullOrEmpty(x.MdxFieldName)))
 					throw new MobileApiException(String.Format("Measures are not defined properly for account {0}, check if MDX name is defined", accountId),
