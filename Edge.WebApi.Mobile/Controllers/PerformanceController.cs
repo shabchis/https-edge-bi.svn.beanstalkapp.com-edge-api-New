@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using System.Web.Http;
 using Edge.Api.Mobile.Performance;
 using Edge.Core.Configuration;
@@ -16,7 +18,7 @@ namespace Edge.WebApi.Mobile.Controllers
 		{
 			try
 			{
-				ValidateSession(sessionId);
+				ValidatePermission(ValidateSession(sessionId), accountId);
 
 				Log.Write("Mobile API", String.Format("Daily performance report request. Parameters: account={0}, from={1}, to={2}, theme={3}, country={4}", accountId, from, to, theme, country), LogMessageType.Debug);
 				var manager = GetManager();
@@ -41,7 +43,7 @@ namespace Edge.WebApi.Mobile.Controllers
 		{
 			try
 			{
-				ValidateSession(sessionId);
+				ValidatePermission(ValidateSession(sessionId), accountId);
 
 				Log.Write("Mobile API", String.Format("ROAS performance report request. Parameters: account={0}, from={1}, to={2}, theme={3}, country={4}", accountId, from, to, theme, country), LogMessageType.Debug);
 				var manager = GetManager();
@@ -65,7 +67,7 @@ namespace Edge.WebApi.Mobile.Controllers
 		{
 			try
 			{
-				ValidateSession(sessionId);
+				ValidatePermission(ValidateSession(sessionId), accountId);
 				
 				Log.Write("Mobile API", String.Format("Campaign performance report request. Parameters: account={0}, from={1}, to={2}, theme={3}, country={4}", accountId, from, to, theme, country), LogMessageType.Debug);
 				var manager = GetManager();
@@ -92,6 +94,28 @@ namespace Edge.WebApi.Mobile.Controllers
 				return new MockPerformanceManager();
 			}
 			return new PerformanceManager();
+		}
+
+		private void ValidatePermission(int userId, int accountId)
+		{
+			using (var connection = new SqlConnection(AppSettings.GetConnectionString("Edge.Core.Data.DataManager.Connection", "String")))
+			{
+				using (var sqlCommand = new SqlCommand("User_ValidatePermission", connection))
+				{
+					sqlCommand.CommandType = CommandType.StoredProcedure;
+					sqlCommand.Parameters.AddWithValue("@userId", userId);
+					sqlCommand.Parameters.AddWithValue("@accountId", accountId);
+					sqlCommand.Parameters.AddWithValue("@permissionType", "Performance");
+					sqlCommand.Parameters.AddWithValue("@applicationType", "Mobile");
+					connection.Open();
+
+					var isValid = sqlCommand.ExecuteScalar().ToString();
+					if (isValid != "1")
+						throw new MobileApiException(String.Format("User {0} has not 'Performance' permission for account {1}", userId, accountId), 
+													 String.Format("User {0} has not 'Performance' permission for account {1}", userId, accountId));
+					
+				}
+			}
 		}
 		#endregion
 	}
