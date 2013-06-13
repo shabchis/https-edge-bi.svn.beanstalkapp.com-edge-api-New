@@ -67,12 +67,12 @@ namespace Edge.Api.Mobile.Performance
 							list.Add(new DailyPerformance
 								{
 									Date   = reader[2] != DBNull.Value ? DateTime.ParseExact(reader[2].ToString(), "dd/MM/yyyy", null, DateTimeStyles.None).ToString("dd/MM/yy") : String.Empty,
-									Cost   = reader[3] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[3]),1) : 0,
-									Clicks = reader[4] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[4]),1) : 0,
-									Acq1   = reader[5] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[5]),1) : 0,
-									Acq2   = reader[6] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[6]),1) : 0,
-									CPA    = reader[7] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[7]),1) : 0,
-									CPR    = reader[8] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[8]),1) : 0,
+									Cost   = reader[3] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[3]),0) : 0,
+									Clicks = reader[4] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[4]),0) : 0,
+									Acq1   = reader[5] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[5]),0) : 0,
+									Acq2   = reader[6] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[6]),0) : 0,
+									CPA    = reader[7] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[7]),0) : 0,
+									CPR    = reader[8] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[8]),0) : 0,
 								});
 						}
 						// prepare response
@@ -86,19 +86,19 @@ namespace Edge.Api.Mobile.Performance
 							PerformanceStatistics = new Dictionary<string, double>()
 						};
 						// calculate statistics values (Sum and Average)
-						response.PerformanceStatistics.Add(PerformanceStatisticsKeys.TotalClicks, Math.Round(response.PerformanceList.Select(x => x.Clicks).Sum(), 1));
-						response.PerformanceStatistics.Add(PerformanceStatisticsKeys.TotalCost, Math.Round(response.PerformanceList.Select(x => x.Cost).Sum(), 1));
-						response.PerformanceStatistics.Add(PerformanceStatisticsKeys.TotalAcq1, Math.Round(response.PerformanceList.Select(x => x.Acq1).Sum(), 1));
-						response.PerformanceStatistics.Add(PerformanceStatisticsKeys.TotalAcq2, Math.Round(response.PerformanceList.Select(x => x.Acq2).Sum(), 1));
-						response.PerformanceStatistics.Add(PerformanceStatisticsKeys.TotalCPA, Math.Round(response.PerformanceList.Select(x => x.CPA).Sum(), 1));
-						response.PerformanceStatistics.Add(PerformanceStatisticsKeys.TotalCPR, Math.Round(response.PerformanceList.Select(x => x.CPR).Sum(), 1));
+						response.PerformanceStatistics.Add(PerformanceStatisticsKeys.TotalClicks, Math.Round(response.PerformanceList.Select(x => x.Clicks).Sum(), 0));
+						response.PerformanceStatistics.Add(PerformanceStatisticsKeys.TotalCost, Math.Round(response.PerformanceList.Select(x => x.Cost).Sum(), 0));
+						response.PerformanceStatistics.Add(PerformanceStatisticsKeys.TotalAcq1, Math.Round(response.PerformanceList.Select(x => x.Acq1).Sum(), 0));
+						response.PerformanceStatistics.Add(PerformanceStatisticsKeys.TotalAcq2, Math.Round(response.PerformanceList.Select(x => x.Acq2).Sum(), 0));
+						response.PerformanceStatistics.Add(PerformanceStatisticsKeys.TotalCPA, Math.Round(response.PerformanceList.Select(x => x.CPA).Sum(), 0));
+						response.PerformanceStatistics.Add(PerformanceStatisticsKeys.TotalCPR, Math.Round(response.PerformanceList.Select(x => x.CPR).Sum(), 0));
 
-						response.PerformanceStatistics.Add(PerformanceStatisticsKeys.AvgClicks, response.PerformanceList.Count > 0 ? Math.Round(response.PerformanceList.Select(x => x.Clicks).Average(), 1) : 0);
-						response.PerformanceStatistics.Add(PerformanceStatisticsKeys.AvgCost, response.PerformanceList.Count > 0 ? Math.Round(response.PerformanceList.Select(x => x.Cost).Average(), 1) : 0);
-						response.PerformanceStatistics.Add(PerformanceStatisticsKeys.AvgAcq1, response.PerformanceList.Count > 0 ? Math.Round(response.PerformanceList.Select(x => x.Acq1).Average(), 1) : 0);
-						response.PerformanceStatistics.Add(PerformanceStatisticsKeys.AvgAcq2, response.PerformanceList.Count > 0 ? Math.Round(response.PerformanceList.Select(x => x.Acq2).Average(), 1) : 0);
-						response.PerformanceStatistics.Add(PerformanceStatisticsKeys.AvgCPA, response.PerformanceList.Count > 0 ? Math.Round(response.PerformanceList.Select(x => x.CPA).Average(), 1) : 0);
-						response.PerformanceStatistics.Add(PerformanceStatisticsKeys.AvgCPR, response.PerformanceList.Count > 0 ? Math.Round(response.PerformanceList.Select(x => x.CPR).Average(), 1) : 0);
+						response.PerformanceStatistics.Add(PerformanceStatisticsKeys.AvgClicks, response.PerformanceList.Count > 0 ? Math.Round(response.PerformanceList.Select(x => x.Clicks).Average(), 0) : 0);
+						response.PerformanceStatistics.Add(PerformanceStatisticsKeys.AvgCost, response.PerformanceList.Count > 0 ? Math.Round(response.PerformanceList.Select(x => x.Cost).Average(), 0) : 0);
+						response.PerformanceStatistics.Add(PerformanceStatisticsKeys.AvgAcq1, response.PerformanceList.Count > 0 ? Math.Round(response.PerformanceList.Select(x => x.Acq1).Average(), 0) : 0);
+						response.PerformanceStatistics.Add(PerformanceStatisticsKeys.AvgAcq2, response.PerformanceList.Count > 0 ? Math.Round(response.PerformanceList.Select(x => x.Acq2).Average(), 0) : 0);
+						response.PerformanceStatistics.Add(PerformanceStatisticsKeys.AvgCPA, response.PerformanceList.Count > 0 ? Math.Round(response.PerformanceList.Select(x => x.Cost).Sum() / response.PerformanceList.Select(x => x.Acq2).Sum(), 0) : 0);
+						response.PerformanceStatistics.Add(PerformanceStatisticsKeys.AvgCPR, response.PerformanceList.Count > 0 ? Math.Round(response.PerformanceList.Select(x => x.Cost).Sum() / response.PerformanceList.Select(x => x.Acq1).Sum(), 0) : 0);
 
 						return response;
 					}
@@ -165,11 +165,11 @@ namespace Edge.Api.Mobile.Performance
 								{
 									Month = reader[1].ToString().Split(' ')[0],
 									Year = reader[1].ToString().Split(' ')[1],
-									Cost = reader[2] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[2]), 1) : 0,
-									TotalDeposit = reader[3] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[3]), 1) : 0,
-									TotalDepositors = reader[4] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[4]), 1) : 0,
-									RoasPercentage = reader[5] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[5]), 1) : 0,
-									CostTotalPercentage = reader[6] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[6]), 1) : 0
+									Cost = reader[2] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[2]), 0) : 0,
+									TotalDeposit = reader[3] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[3]), 0) : 0,
+									TotalDepositors = reader[4] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[4]), 0) : 0,
+									RoasPercentage = reader[5] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[5]), 0) : 0,
+									CostTotalPercentage = reader[6] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[6]), 0) : 0
 								});
 							}
 						}
@@ -235,12 +235,12 @@ namespace Edge.Api.Mobile.Performance
 							var performance = new CampaignPerformance
 								{
 									CampaignName = reader[1] != DBNull.Value ? reader[1].ToString() : String.Empty,
-									Cost	= reader[2] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[2]),1) : 0,
-									Clicks	= reader[3] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[3]),1) : 0,
-									Acq1	= reader[4] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[4]),1) : 0,
-									Acq2	= reader[5] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[5]),1) : 0,
-									CPA		= reader[6] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[6]),1) : 0,
-									CPR		= reader[7] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[7]), 1) : 0,
+									Cost	= reader[2] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[2]),0) : 0,
+									Clicks	= reader[3] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[3]),0) : 0,
+									Acq1	= reader[4] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[4]),0) : 0,
+									Acq2	= reader[5] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[5]),0) : 0,
+									CPA		= reader[6] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[6]),0) : 0,
+									CPR		= reader[7] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[7]),0) : 0,
 								};
 							// add perfrmance to list only if it has at least ont value
 							if (performance.Cost > 0 || performance.Clicks > 0 || performance.Acq1 > 0 || performance.Acq2 > 0 || performance.CPA > 0 || performance.CPR > 0)
