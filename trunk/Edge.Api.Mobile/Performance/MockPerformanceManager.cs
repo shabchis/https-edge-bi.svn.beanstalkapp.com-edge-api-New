@@ -56,6 +56,7 @@ namespace Edge.Api.Mobile.Performance
 				{
 					Cost = (double)r.Next(1, 10000) / 100,
 					CostTotalPercentage = r.Next(1, 100),
+					Year = DateTime.Now.ToString("yyyy"),
 					Month = r.Next(1,12).ToString(CultureInfo.InvariantCulture),
 					RoasPercentage = r.Next(1, 100),
 					TotalDeposit = r.Next(0, 1000),

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Web.Http;
 using Edge.Api.Handlers;
+using Edge.Core.Configuration;
 using Edge.Core.Utilities;
 using Edge.Objects;
 
@@ -14,6 +15,10 @@ namespace Edge.WebApi.Mobile.Controllers
 										 OperationTypeEnum operationType = OperationTypeEnum.New, 
 										 ApplicationType applicationType = ApplicationType.Mobile )
 		{
+			// no permission validation if configured 
+			if (AppSettings.Get("MobileApi", "ValidateSession", false) == "false")
+				return new ExtendedSessionResponseData { UserID = 178, Session = "aaa" };
+
 			var sessionData = new SessionRequestData
 				{
 					Email = email,
@@ -29,7 +34,7 @@ namespace Edge.WebApi.Mobile.Controllers
 			{
 				var response = handler.LogIn(sessionData);
 				Log.Write("Mobile API", String.Format("User {0} logged in to Mobile Application", response.UserID), LogMessageType.Debug);
-				return new ExtendedSessionResponseData {UserID = response.UserID, Session = response.Session};
+				return new ExtendedSessionResponseData { UserID = response.UserID, Session = response.Session };
 			}
 			catch (Exception ex)
 			{
