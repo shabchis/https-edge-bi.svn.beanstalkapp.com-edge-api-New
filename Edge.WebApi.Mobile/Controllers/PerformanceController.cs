@@ -98,6 +98,10 @@ namespace Edge.WebApi.Mobile.Controllers
 
 		private void ValidatePermission(int userId, int accountId)
 		{
+			// no permission validation if configured 
+			if (AppSettings.Get("MobileApi", "ValidateSession", false) == "false") return;
+
+			// real validation
 			using (var connection = new SqlConnection(AppSettings.GetConnectionString("Edge.Core.Data.DataManager.Connection", "String")))
 			{
 				using (var sqlCommand = new SqlCommand("User_ValidatePermission", connection))
