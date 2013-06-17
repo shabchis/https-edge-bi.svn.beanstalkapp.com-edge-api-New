@@ -42,7 +42,7 @@ namespace Edge.Api.Mobile.Settings
 				{
 					sqlCommand.CommandType = CommandType.StoredProcedure;
 					sqlCommand.Parameters.AddWithValue("@userId", userId);
-					sqlCommand.Parameters.AddWithValue("@permission", "menu:Intelligence/Analysis");
+					sqlCommand.Parameters.AddWithValue("@permission", "Performance");
 					sqlCommand.Parameters.AddWithValue("@suportAdmin", 1);
 					sqlCommand.Parameters.AddWithValue("@activeAccountsOnly", 1);
 					connection.Open();
