@@ -42,7 +42,7 @@ namespace Edge.Objects.Performance
 				if (maxTimerange > 0 && maxTimerange < daysDiff)
 				{
 					throw new MobileApiException(String.Format("Invalid date parameters, max time interval allowed for report '{1}' is {0} days. To exceed please change in configuration.", maxTimerange, reportType),
-												 String.Format("Invalid report parameters: max time interval is {0} days", maxTimerange));
+												 String.Format("Incorrect Time Selection: Maximum time period for this report is {0} days.", maxTimerange));
 				}
 			}
 		}

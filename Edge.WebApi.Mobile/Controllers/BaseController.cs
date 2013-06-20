@@ -17,10 +17,10 @@ namespace Edge.WebApi.Mobile.Controllers
 			ApplicationType appType;
 
 			if (!TemplateHandler.IsSessionValid(sessionId, out userId, out appType))
-				throw new MobileApiException(string.Format("Invalid session {0} for user {1}", sessionId, userId), "Invalid session");
+				throw new MobileApiException(string.Format("Invalid session {0} for user {1}", sessionId, userId), "Your session has timed out, please sign in again.");
 
 			if (appType != ApplicationType.Mobile)
-				throw new MobileApiException("Session is not valid for Mobile application", "Invaid Mobile session");
+				throw new MobileApiException("Session is not valid for Mobile application", "Invalid Mobile session");
 
 			return userId;
 		}
