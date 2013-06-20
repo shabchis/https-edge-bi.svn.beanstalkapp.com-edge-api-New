@@ -22,7 +22,9 @@ namespace Edge.WebApi.Mobile.Controllers
 
 				Log.Write("Mobile API", String.Format("Daily performance report request. Parameters: account={0}, from={1}, to={2}, theme={3}, country={4}", accountId, from, to, theme, country), LogMessageType.Debug);
 				var manager = GetManager();
-				return manager.GetPerformance(accountId, from, to, theme, country);
+				var responce = manager.GetPerformance(accountId, from, to, theme, country);
+				Log.Write("Mobile API", String.Format("Finished Daily performance report request. Response contains {0} records", responce.PerformanceList.Count), LogMessageType.Debug);
+				return responce;
 			}
 			catch (Exception ex)
 			{
@@ -47,7 +49,9 @@ namespace Edge.WebApi.Mobile.Controllers
 
 				Log.Write("Mobile API", String.Format("ROAS performance report request. Parameters: account={0}, from={1}, to={2}, theme={3}, country={4}", accountId, from, to, theme, country), LogMessageType.Debug);
 				var manager = GetManager();
-				return manager.GetRoasPerformance(accountId, from, to, theme, country);
+				var responce = manager.GetRoasPerformance(accountId, from, to, theme, country);
+				Log.Write("Mobile API", String.Format("Finished ROAS performance report request. Response contains {0} records", responce.PerformanceList.Count), LogMessageType.Debug);
+				return responce;
 			}
 			catch (Exception ex)
 			{
@@ -71,7 +75,9 @@ namespace Edge.WebApi.Mobile.Controllers
 				
 				Log.Write("Mobile API", String.Format("Campaign performance report request. Parameters: account={0}, from={1}, to={2}, theme={3}, country={4}", accountId, from, to, theme, country), LogMessageType.Debug);
 				var manager = GetManager();
-				return manager.GetCampaignPerformance(accountId, from, to, theme, country);
+				var responce = manager.GetCampaignPerformance(accountId, from, to, theme, country);
+				Log.Write("Mobile API", String.Format("Finished Campaign performance report request. Response contains {0} records", responce.PerformanceList.Count), LogMessageType.Debug);
+				return responce;
 			}
 			catch (Exception ex)
 			{

@@ -18,7 +18,7 @@ namespace Edge.Api.Mobile.Settings
 			{
 				using (var sqlCommand = new SqlCommand { Connection = connection })
 				{
-					sqlCommand.CommandText = "SELECT ValueId, Value FROM SegmentValue WHERE SegmentId=@segmentId AND (AccountId=@accountId or AccountId=-1)";
+					sqlCommand.CommandText = "SELECT ValueId, Value FROM SegmentValue WHERE SegmentId=@segmentId AND (AccountId=@accountId or AccountId=-1) ORDER BY Value";
 					sqlCommand.Parameters.AddWithValue("@accountId", accountId);
 					sqlCommand.Parameters.AddWithValue("@segmentId", (int)segmentType);
 					connection.Open();
