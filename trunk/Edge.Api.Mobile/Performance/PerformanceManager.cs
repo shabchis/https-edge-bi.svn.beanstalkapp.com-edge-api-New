@@ -167,8 +167,8 @@ namespace Edge.Api.Mobile.Performance
 									Year = reader[1].ToString().Split(' ')[1],
 									Cost = reader[2] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[2]), 0) : 0,
 									TotalDeposit = reader[3] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[3]), 0) : 0,
-									TotalDepositors = reader[4] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[4]), 0) : 0,
-									RoasPercentage = reader[5] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[5]), 0) : 0,
+									RoasPercentage = reader[4] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[4]), 0) : 0,
+									TotalDepositors = reader[5] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[5]), 0) : 0,
 									CostTotalPercentage = reader[6] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[6]), 0) : 0
 								});
 							}
