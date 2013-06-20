@@ -34,7 +34,7 @@ namespace Edge.WebApi.Mobile.Controllers
 				{
 					HasError = true,
 					ErrorMsg = ex.Message,
-					DisplayError = (ex is MobileApiException) ? (ex as MobileApiException).DisplayMessage : "Failure in Daily Performance report"
+					DisplayError = (ex is MobileApiException) ? (ex as MobileApiException).DisplayMessage : "Failed to generate Daily performance report, please contact Support@edge.bi (Error: 'General')."
 				};
 			}
 
@@ -61,7 +61,7 @@ namespace Edge.WebApi.Mobile.Controllers
 				{
 					HasError = true,
 					ErrorMsg = ex.Message,
-					DisplayError = (ex is MobileApiException) ? (ex as MobileApiException).DisplayMessage : "Failure in ROAS Performance report"
+					DisplayError = (ex is MobileApiException) ? (ex as MobileApiException).DisplayMessage : "Failed to generate ROAS performance report, please contact Support@edge.bi (Error: 'General')."
 				};
 			}
 		}
@@ -87,7 +87,7 @@ namespace Edge.WebApi.Mobile.Controllers
 				{
 					HasError = true,
 					ErrorMsg = ex.Message,
-					DisplayError = (ex is MobileApiException) ? (ex as MobileApiException).DisplayMessage : "Failure in Campaign Performance report"
+					DisplayError = (ex is MobileApiException) ? (ex as MobileApiException).DisplayMessage : "Failed to generate Campaign performance report, please contact Support@edge.bi (Error: 'General')."
 				};
 			}
 		}

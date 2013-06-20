@@ -28,7 +28,7 @@ namespace Edge.Objects.Performance
 			catch (Exception ex)
 			{
 				throw new MobileApiException(String.Format("Wrong parameters format: dates=ddMMyyyy, lists=INTs seperated by comma, ex: {0}", ex.Message),
-											 "Invalid request");
+											 "Failed to generate performance report, please contact Support@edge.bi (Error: 'Request parameters').");
 			}
 			CheckTimeRange(reportType);
 		}
