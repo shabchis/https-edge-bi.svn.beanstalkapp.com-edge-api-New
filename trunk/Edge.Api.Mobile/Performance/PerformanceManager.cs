@@ -29,12 +29,12 @@ namespace Edge.Api.Mobile.Performance
 				var cubeName = GetAccountCubeName(accountId, connection);
 				if (String.IsNullOrWhiteSpace(cubeName)) 
 					throw new MobileApiException(String.Format("Cannot retrieve cube name for account {0}", accountId), 
-												 String.Format("No cube defined for account {0}", accountId));
+												 String.Format("Your account {0} is not configured correctly, please contact Support@edge.bi (Error: 'Cube').", accountId));
 
 				var measureList = GetMeasures(accountId, connection);
 				if (measureList.Count == 0 || measureList.Any(x => String.IsNullOrEmpty(x.MdxFieldName)))
 					throw new MobileApiException(String.Format("Measures are not defined properly for account {0}, check if MDX name is defined", accountId),
-												 String.Format("Measures are not defined properly for account {0}", accountId));
+												 String.Format("Your account {0} is not configured correctly, please contact Support@edge.bi (Error: 'Measures').", accountId));
 
 				// prepare SELECT and FROM
 				var selectClause = String.Format(@"SELECT NON EMPTY {{[Time Dim].[Time Dim].[Day]}} ON ROWS,( {{ [Measures].[Cost],[Measures].[Clicks],[Measures].[{0}], [Measures].[{1}],[Measures].[{2}],[Measures].[{3}]}} ) ON COLUMNS",
@@ -118,16 +118,16 @@ namespace Edge.Api.Mobile.Performance
 				var cubeName = GetAccountCubeName(accountId, connection);
 				if (String.IsNullOrWhiteSpace(cubeName))
 					throw new MobileApiException(String.Format("Cannot retrieve cube name for account {0}", accountId),
-												 String.Format("No cube defined for account {0}", accountId));
-
+												 String.Format("Your account {0} is not configured correctly, please contact Support@edge.bi (Error: 'Cube').", accountId));
+				
 				var measureList = GetMeasures(accountId, connection);
 				if (!measureList.Any(x => x.IsDeposit))
 					throw new MobileApiException(String.Format("There is no deposit field defined for account {0}", accountId),
-												 String.Format("ROAS report is not relevant for account {0}", accountId)); 
-				
+												 String.Format("Your account {0} is not configured to use ROAS view.", accountId));
+
 				if (measureList.Count == 0 || measureList.Any(x => String.IsNullOrEmpty(x.MdxFieldName)))
 					throw new MobileApiException(String.Format("Measures are not defined properly for account {0}, check if MDX name is defined", accountId),
-												 String.Format("Measures are not defined properly for account {0}", accountId));
+												 String.Format("Your account {0} is not configured correctly, please contact Support@edge.bi (Error: 'Measures').", accountId));
 
 				// prepare WITH, SELECT and FROM
 				var withClause = String.Format("WITH MEMBER [%ROAS] AS [Measures].[{0}]/ IIF([Measures].[Cost] = 0, NULL, [Measures].[Cost] ) * 100 ", measureList.First(x => x.IsDeposit).MdxFieldName);
@@ -197,12 +197,12 @@ namespace Edge.Api.Mobile.Performance
 				var cubeName = GetAccountCubeName(accountId, connection);
 				if (String.IsNullOrWhiteSpace(cubeName))
 					throw new MobileApiException(String.Format("Cannot retrieve cube name for account {0}", accountId),
-												 String.Format("No cube defined for account {0}", accountId));
+												 String.Format("Your account {0} is not configured correctly, please contact Support@edge.bi (Error: 'Cube').", accountId));
 
 				var measureList = GetMeasures(accountId, connection);
 				if (measureList.Count == 0 || measureList.Any(x => String.IsNullOrEmpty(x.MdxFieldName)))
 					throw new MobileApiException(String.Format("Measures are not defined properly for account {0}, check if MDX name is defined", accountId),
-												 String.Format("Measures are not defined properly for account {0}", accountId));
+												 String.Format("Your account {0} is not configured correctly, please contact Support@edge.bi (Error: 'Measures').", accountId));
 
 				// prepare SELECT and FROM
 				var selectClause = String.Format(@"SELECT NON EMPTY [Getways Dim].[Gateways].[Campaign].members ON ROWS,( {{ [Measures].[Cost],[Measures].[Clicks],[Measures].[{0}], [Measures].[{1}],[Measures].[{2}],[Measures].[{3}]}} ) ON COLUMNS",
