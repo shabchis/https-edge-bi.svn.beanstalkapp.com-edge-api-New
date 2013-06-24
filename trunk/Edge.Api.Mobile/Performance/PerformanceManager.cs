@@ -25,10 +25,11 @@ namespace Edge.Api.Mobile.Performance
 			{
 				connection.Open();
 
-				// get cube name and relevant measure config foe preparing MDX command
+				#region Prepare MDX
+				// get cube name and relevant measure config for preparing MDX command
 				var cubeName = GetAccountCubeName(accountId, connection);
-				if (String.IsNullOrWhiteSpace(cubeName)) 
-					throw new MobileApiException(String.Format("Cannot retrieve cube name for account {0}", accountId), 
+				if (String.IsNullOrWhiteSpace(cubeName))
+					throw new MobileApiException(String.Format("Cannot retrieve cube name for account {0}", accountId),
 												 String.Format("Your account {0} is not configured correctly, please contact Support@edge.bi (Error: 'Cube').", accountId));
 
 				var measureList = GetMeasures(accountId, connection);
@@ -49,60 +50,71 @@ namespace Edge.Api.Mobile.Performance
 												perfParam.FromDate.ToString("yyyyMMdd"),
 												perfParam.ToDate.ToString("yyyyMMdd"),
 												GetWhereClause(perfParam.Themes, "Theme"),
-												GetWhereClause(perfParam.Countries, "Country"));
+												GetWhereClause(perfParam.Countries, "Country")); 
+				#endregion
 
-				using (var cmd = DataManager.CreateCommand("SP_ExecuteMDX", CommandType.StoredProcedure))
+				try
 				{
-					cmd.Parameters.AddWithValue("@WithMDX", " ");
-					cmd.Parameters.AddWithValue("@SelectMDX", selectClause);
-					cmd.Parameters.AddWithValue("@FromMDX", fromClause);
-					cmd.Connection = connection;
-					cmd.CommandTimeout = GetSqlTimeout();
-
-					// execute MDX
-					using (var reader = cmd.ExecuteReader())
+					#region Execute MDX
+					using (var cmd = DataManager.CreateCommand("SP_ExecuteMDX", CommandType.StoredProcedure))
 					{
-						var list = new List<DailyPerformance>();
-						while (reader.Read())
+						cmd.Parameters.AddWithValue("@WithMDX", " ");
+						cmd.Parameters.AddWithValue("@SelectMDX", selectClause);
+						cmd.Parameters.AddWithValue("@FromMDX", fromClause);
+						cmd.Connection = connection;
+						cmd.CommandTimeout = GetSqlTimeout();
+
+						// execute MDX
+						using (var reader = cmd.ExecuteReader())
 						{
-							list.Add(new DailyPerformance
-								{
-									Date   = reader[2] != DBNull.Value ? DateTime.ParseExact(reader[2].ToString(), "dd/MM/yyyy", null, DateTimeStyles.None).ToString("dd/MM/yy") : String.Empty,
-									Cost   = reader[3] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[3]),0) : 0,
-									Clicks = reader[4] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[4]),0) : 0,
-									Acq1   = reader[5] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[5]),0) : 0,
-									Acq2   = reader[6] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[6]),0) : 0,
-									CPA    = reader[7] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[7]),0) : 0,
-									CPR    = reader[8] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[8]),0) : 0,
-								});
+							var list = new List<DailyPerformance>();
+							while (reader.Read())
+							{
+								list.Add(new DailyPerformance
+									{
+										Date = reader[2] != DBNull.Value ? DateTime.ParseExact(reader[2].ToString(), "dd/MM/yyyy", null, DateTimeStyles.None).ToString("dd/MM/yy") : String.Empty,
+										Cost = reader[3] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[3]), 0) : 0,
+										Clicks = reader[4] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[4]), 0) : 0,
+										Acq1 = reader[5] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[5]), 0) : 0,
+										Acq2 = reader[6] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[6]), 0) : 0,
+										CPA = reader[7] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[7]), 0) : 0,
+										CPR = reader[8] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[8]), 0) : 0,
+									});
+							}
+							// prepare response
+							var response = new DailyPerformanceResponse
+							{
+								PerformanceList = list,
+								Acq1FieldName = measureList.First(x => x.MeasureBaseID == BaseMeasure.ACQ1).MeasureDisplayName,
+								Acq2FieldName = measureList.First(x => x.MeasureBaseID == BaseMeasure.ACQ2).MeasureDisplayName,
+								CPAFieldName = measureList.First(x => x.MeasureBaseID == BaseMeasure.ACQ1_CPA).MeasureDisplayName,
+								CPRFieldName = measureList.First(x => x.MeasureBaseID == BaseMeasure.ACQ2_CPA).MeasureDisplayName,
+								PerformanceStatistics = new Dictionary<string, double>()
+							};
+							// calculate statistics values (Sum and Average)
+							response.PerformanceStatistics.Add(PerformanceStatisticsKeys.TotalClicks, Math.Round(response.PerformanceList.Select(x => x.Clicks).Sum(), 0));
+							response.PerformanceStatistics.Add(PerformanceStatisticsKeys.TotalCost, Math.Round(response.PerformanceList.Select(x => x.Cost).Sum(), 0));
+							response.PerformanceStatistics.Add(PerformanceStatisticsKeys.TotalAcq1, Math.Round(response.PerformanceList.Select(x => x.Acq1).Sum(), 0));
+							response.PerformanceStatistics.Add(PerformanceStatisticsKeys.TotalAcq2, Math.Round(response.PerformanceList.Select(x => x.Acq2).Sum(), 0));
+							response.PerformanceStatistics.Add(PerformanceStatisticsKeys.TotalCPA, Math.Round(response.PerformanceList.Select(x => x.CPA).Sum(), 0));
+							response.PerformanceStatistics.Add(PerformanceStatisticsKeys.TotalCPR, Math.Round(response.PerformanceList.Select(x => x.CPR).Sum(), 0));
+
+							response.PerformanceStatistics.Add(PerformanceStatisticsKeys.AvgClicks, response.PerformanceList.Count > 0 ? Math.Round(response.PerformanceList.Select(x => x.Clicks).Average(), 0) : 0);
+							response.PerformanceStatistics.Add(PerformanceStatisticsKeys.AvgCost, response.PerformanceList.Count > 0 ? Math.Round(response.PerformanceList.Select(x => x.Cost).Average(), 0) : 0);
+							response.PerformanceStatistics.Add(PerformanceStatisticsKeys.AvgAcq1, response.PerformanceList.Count > 0 ? Math.Round(response.PerformanceList.Select(x => x.Acq1).Average(), 0) : 0);
+							response.PerformanceStatistics.Add(PerformanceStatisticsKeys.AvgAcq2, response.PerformanceList.Count > 0 ? Math.Round(response.PerformanceList.Select(x => x.Acq2).Average(), 0) : 0);
+							response.PerformanceStatistics.Add(PerformanceStatisticsKeys.AvgCPA, response.PerformanceList.Count > 0 ? Math.Round(response.PerformanceList.Select(x => x.Cost).Sum() / response.PerformanceList.Select(x => x.Acq2).Sum(), 0) : 0);
+							response.PerformanceStatistics.Add(PerformanceStatisticsKeys.AvgCPR, response.PerformanceList.Count > 0 ? Math.Round(response.PerformanceList.Select(x => x.Cost).Sum() / response.PerformanceList.Select(x => x.Acq1).Sum(), 0) : 0);
+
+							return response;
 						}
-						// prepare response
-						var response = new DailyPerformanceResponse
-						{
-							PerformanceList = list,
-							Acq1FieldName = measureList.First(x => x.MeasureBaseID == BaseMeasure.ACQ1).MeasureDisplayName,
-							Acq2FieldName = measureList.First(x => x.MeasureBaseID == BaseMeasure.ACQ2).MeasureDisplayName,
-							CPAFieldName = measureList.First(x => x.MeasureBaseID == BaseMeasure.ACQ1_CPA).MeasureDisplayName,
-							CPRFieldName = measureList.First(x => x.MeasureBaseID == BaseMeasure.ACQ2_CPA).MeasureDisplayName,
-							PerformanceStatistics = new Dictionary<string, double>()
-						};
-						// calculate statistics values (Sum and Average)
-						response.PerformanceStatistics.Add(PerformanceStatisticsKeys.TotalClicks, Math.Round(response.PerformanceList.Select(x => x.Clicks).Sum(), 0));
-						response.PerformanceStatistics.Add(PerformanceStatisticsKeys.TotalCost, Math.Round(response.PerformanceList.Select(x => x.Cost).Sum(), 0));
-						response.PerformanceStatistics.Add(PerformanceStatisticsKeys.TotalAcq1, Math.Round(response.PerformanceList.Select(x => x.Acq1).Sum(), 0));
-						response.PerformanceStatistics.Add(PerformanceStatisticsKeys.TotalAcq2, Math.Round(response.PerformanceList.Select(x => x.Acq2).Sum(), 0));
-						response.PerformanceStatistics.Add(PerformanceStatisticsKeys.TotalCPA, Math.Round(response.PerformanceList.Select(x => x.CPA).Sum(), 0));
-						response.PerformanceStatistics.Add(PerformanceStatisticsKeys.TotalCPR, Math.Round(response.PerformanceList.Select(x => x.CPR).Sum(), 0));
-
-						response.PerformanceStatistics.Add(PerformanceStatisticsKeys.AvgClicks, response.PerformanceList.Count > 0 ? Math.Round(response.PerformanceList.Select(x => x.Clicks).Average(), 0) : 0);
-						response.PerformanceStatistics.Add(PerformanceStatisticsKeys.AvgCost, response.PerformanceList.Count > 0 ? Math.Round(response.PerformanceList.Select(x => x.Cost).Average(), 0) : 0);
-						response.PerformanceStatistics.Add(PerformanceStatisticsKeys.AvgAcq1, response.PerformanceList.Count > 0 ? Math.Round(response.PerformanceList.Select(x => x.Acq1).Average(), 0) : 0);
-						response.PerformanceStatistics.Add(PerformanceStatisticsKeys.AvgAcq2, response.PerformanceList.Count > 0 ? Math.Round(response.PerformanceList.Select(x => x.Acq2).Average(), 0) : 0);
-						response.PerformanceStatistics.Add(PerformanceStatisticsKeys.AvgCPA, response.PerformanceList.Count > 0 ? Math.Round(response.PerformanceList.Select(x => x.Cost).Sum() / response.PerformanceList.Select(x => x.Acq2).Sum(), 0) : 0);
-						response.PerformanceStatistics.Add(PerformanceStatisticsKeys.AvgCPR, response.PerformanceList.Count > 0 ? Math.Round(response.PerformanceList.Select(x => x.Cost).Sum() / response.PerformanceList.Select(x => x.Acq1).Sum(), 0) : 0);
-
-						return response;
-					}
+					} 
+					#endregion
+				}
+				catch (Exception ex)
+				{
+					throw new MobileApiException(String.Format("Failure in Daily performance MDX, ex: {0}. SELECT='{1}', FROM='{2}'", ex.Message, selectClause, fromClause),
+																"Failed to generate Daily performance report, please contact Support@edge.bi (Error: 'MDX').");
 				}
 			}
 		}
@@ -116,13 +128,13 @@ namespace Edge.Api.Mobile.Performance
 			{
 				connection.Open();
 
-				// get cube name and relevant measure config foe preparing MDX command
-				// get cube name and relevant measure config foe preparing MDX command
+				#region Prepare MDX
+				// get cube name and relevant measure config fore preparing MDX command
 				var cubeName = GetAccountCubeName(accountId, connection);
 				if (String.IsNullOrWhiteSpace(cubeName))
 					throw new MobileApiException(String.Format("Cannot retrieve cube name for account {0}", accountId),
 												 String.Format("Your account {0} is not configured correctly, please contact Support@edge.bi (Error: 'Cube').", accountId));
-				
+
 				var measureList = GetMeasures(accountId, connection);
 				if (!measureList.Any(x => x.IsDeposit))
 					throw new MobileApiException(String.Format("There is no deposit field defined for account {0}", accountId),
@@ -134,7 +146,7 @@ namespace Edge.Api.Mobile.Performance
 
 				// prepare WITH, SELECT and FROM
 				var withClause = String.Format("WITH MEMBER [%ROAS] AS [Measures].[{0}]/ IIF([Measures].[Cost] = 0, NULL, [Measures].[Cost] ) * 100 ", measureList.First(x => x.IsDeposit).MdxFieldName);
-				
+
 				var selectClause = String.Format(@"SELECT ClosingPeriod([Time Dim].[Time Dim].[Month], [Time Dim].[Time Dim].CurrentMember).Lag(12) : ClosingPeriod([Time Dim].[Time Dim].[Month], [Time Dim].[Time Dim].CurrentMember) ON ROWS, 
 												   ({{[Measures].[Cost],[Measures].[{0}],[%ROAS],[Measures].[{1}], [Measures].[{2}]}}) ON COLUMNS",
 												measureList.First(x => x.IsDeposit).MdxFieldName,
@@ -147,44 +159,58 @@ namespace Edge.Api.Mobile.Performance
 												perfParam.FromDate.ToString("yyyyMMdd"),
 												perfParam.ToDate.ToString("yyyyMMdd"),
 												GetWhereClause(perfParam.Themes, "Theme"),
-												GetWhereClause(perfParam.Countries, "Country"));
+												GetWhereClause(perfParam.Countries, "Country")); 
+				#endregion
 
-				using (var cmd = DataManager.CreateCommand("SP_ExecuteMDX", CommandType.StoredProcedure))
+				try
 				{
-					cmd.Parameters.AddWithValue("@WithMDX", withClause);
-					cmd.Parameters.AddWithValue("@SelectMDX", selectClause);
-					cmd.Parameters.AddWithValue("@FromMDX", fromClause);
-					cmd.Connection = connection;
-					cmd.CommandTimeout = GetSqlTimeout();
+					#region Execute MDX
 
-					// execute MDX
-					using (var reader = cmd.ExecuteReader())
+					using (var cmd = DataManager.CreateCommand("SP_ExecuteMDX", CommandType.StoredProcedure))
 					{
-						var list = new List<RoasPerformance>();
-						while (reader.Read())
+						cmd.Parameters.AddWithValue("@WithMDX", withClause);
+						cmd.Parameters.AddWithValue("@SelectMDX", selectClause);
+						cmd.Parameters.AddWithValue("@FromMDX", fromClause);
+						cmd.Connection = connection;
+						cmd.CommandTimeout = GetSqlTimeout();
+
+						// execute MDX
+						using (var reader = cmd.ExecuteReader())
 						{
-							if (reader[1] != DBNull.Value)
+							var list = new List<RoasPerformance>();
+							while (reader.Read())
 							{
-								list.Add(new RoasPerformance
+								if (reader[1] != DBNull.Value)
 								{
-									Month = reader[1].ToString().Split(' ')[0],
-									Year = reader[1].ToString().Split(' ')[1],
-									Cost = reader[2] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[2]), 0) : 0,
-									TotalDeposit = reader[3] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[3]), 0) : 0,
-									RoasPercentage = reader[4] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[4]), 0) : 0,
-									TotalDepositors = reader[5] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[5]), 0) : 0,
-									CostTotalPercentage = reader[6] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[6]), 0) : 0
-								});
+									list.Add(new RoasPerformance
+										{
+											Month = reader[1].ToString().Split(' ')[0],
+											Year = reader[1].ToString().Split(' ')[1],
+											Cost = reader[2] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[2]), 0) : 0,
+											TotalDeposit = reader[3] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[3]), 0) : 0,
+											RoasPercentage = reader[4] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[4]), 0) : 0,
+											TotalDepositors = reader[5] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[5]), 0) : 0,
+											CostTotalPercentage = reader[6] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[6]), 0) : 0
+										});
+								}
 							}
+							return new RoasPerformanceResponse
+								{
+									PerformanceList = list,
+									TotalDepositFieldName = measureList.First(x => x.IsDeposit).MeasureDisplayName,
+									TotalDepositorsFieldName = measureList.First(x => x.MeasureBaseID == BaseMeasure.ACQ2).MeasureDisplayName,
+									CostTotalPercentageFieldName =
+										measureList.First(x => x.MeasureBaseID == BaseMeasure.ACQ2_CPA).MeasureDisplayName,
+								};
 						}
-						return new RoasPerformanceResponse
-							{
-								PerformanceList = list,
-								TotalDepositFieldName = measureList.First(x => x.IsDeposit).MeasureDisplayName,
-								TotalDepositorsFieldName = measureList.First(x => x.MeasureBaseID == BaseMeasure.ACQ2).MeasureDisplayName,
-								CostTotalPercentageFieldName = measureList.First(x => x.MeasureBaseID == BaseMeasure.ACQ2_CPA).MeasureDisplayName,
-							};
 					}
+
+					#endregion
+				}
+				catch (Exception ex)
+				{
+					throw new MobileApiException(String.Format("Failure in ROAS performance MDX, ex: {0}. WITH='{3}', SELECT='{1}', FROM='{2}'", ex.Message, selectClause, fromClause, withClause),
+																"Failed to generate ROAS performance report, please contact Support@edge.bi (Error: 'MDX').");
 				}
 			}
 		}
@@ -196,8 +222,8 @@ namespace Edge.Api.Mobile.Performance
 			{
 				connection.Open();
 
-				// get cube name and relevant measure config foe preparing MDX command
-				// get cube name and relevant measure config foe preparing MDX command
+				#region Prepare MDX
+				// get cube name and relevant measure config for preparing MDX command
 				var cubeName = GetAccountCubeName(accountId, connection);
 				if (String.IsNullOrWhiteSpace(cubeName))
 					throw new MobileApiException(String.Format("Cannot retrieve cube name for account {0}", accountId),
@@ -221,46 +247,60 @@ namespace Edge.Api.Mobile.Performance
 												perfParam.FromDate.ToString("yyyyMMdd"),
 												perfParam.ToDate.ToString("yyyyMMdd"),
 												GetWhereClause(perfParam.Themes, "Theme"),
-												GetWhereClause(perfParam.Countries, "Country"));
+												GetWhereClause(perfParam.Countries, "Country")); 
+				#endregion
 
-				using (var cmd = DataManager.CreateCommand("SP_ExecuteMDX", CommandType.StoredProcedure))
+				try
 				{
-					cmd.Parameters.AddWithValue("@WithMDX", " ");
-					cmd.Parameters.AddWithValue("@SelectMDX", selectClause);
-					cmd.Parameters.AddWithValue("@FromMDX", fromClause);
-					cmd.Connection = connection;
-					cmd.CommandTimeout = GetSqlTimeout();
+					#region Execute MDX
 
-					// execute MDX
-					using (var reader = cmd.ExecuteReader())
+					using (var cmd = DataManager.CreateCommand("SP_ExecuteMDX", CommandType.StoredProcedure))
 					{
-						var list = new List<CampaignPerformance>();
-						while (reader.Read())
+						cmd.Parameters.AddWithValue("@WithMDX", " ");
+						cmd.Parameters.AddWithValue("@SelectMDX", selectClause);
+						cmd.Parameters.AddWithValue("@FromMDX", fromClause);
+						cmd.Connection = connection;
+						cmd.CommandTimeout = GetSqlTimeout();
+
+						// execute MDX
+						using (var reader = cmd.ExecuteReader())
 						{
-							var performance = new CampaignPerformance
+							var list = new List<CampaignPerformance>();
+							while (reader.Read())
+							{
+								var performance = new CampaignPerformance
+									{
+										CampaignName = reader[1] != DBNull.Value ? reader[1].ToString() : String.Empty,
+										Cost = reader[2] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[2]), 0) : 0,
+										Clicks = reader[3] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[3]), 0) : 0,
+										Acq1 = reader[4] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[4]), 0) : 0,
+										Acq2 = reader[5] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[5]), 0) : 0,
+										CPA = reader[6] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[6]), 0) : 0,
+										CPR = reader[7] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[7]), 0) : 0,
+									};
+								// add perfrmance to list only if it has at least ont value
+								if (performance.Cost > 0 || performance.Clicks > 0 || performance.Acq1 > 0 || performance.Acq2 > 0 ||
+								    performance.CPA > 0 || performance.CPR > 0)
+									list.Add(performance);
+							}
+							var response = new CampaignPerformanceResponse
 								{
-									CampaignName = reader[1] != DBNull.Value ? reader[1].ToString() : String.Empty,
-									Cost	= reader[2] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[2]),0) : 0,
-									Clicks	= reader[3] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[3]),0) : 0,
-									Acq1	= reader[4] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[4]),0) : 0,
-									Acq2	= reader[5] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[5]),0) : 0,
-									CPA		= reader[6] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[6]),0) : 0,
-									CPR		= reader[7] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[7]),0) : 0,
+									PerformanceList = list,
+									Acq1FieldName = measureList.First(x => x.MeasureBaseID == BaseMeasure.ACQ1).MeasureDisplayName,
+									Acq2FieldName = measureList.First(x => x.MeasureBaseID == BaseMeasure.ACQ2).MeasureDisplayName,
+									CPAFieldName = measureList.First(x => x.MeasureBaseID == BaseMeasure.ACQ1_CPA).MeasureDisplayName,
+									CPRFieldName = measureList.First(x => x.MeasureBaseID == BaseMeasure.ACQ2_CPA).MeasureDisplayName
 								};
-							// add perfrmance to list only if it has at least ont value
-							if (performance.Cost > 0 || performance.Clicks > 0 || performance.Acq1 > 0 || performance.Acq2 > 0 || performance.CPA > 0 || performance.CPR > 0)
-								list.Add(performance);
+							return response;
 						}
-						var response = new CampaignPerformanceResponse
-						{
-							PerformanceList = list,
-							Acq1FieldName = measureList.First(x => x.MeasureBaseID == BaseMeasure.ACQ1).MeasureDisplayName,
-							Acq2FieldName = measureList.First(x => x.MeasureBaseID == BaseMeasure.ACQ2).MeasureDisplayName,
-							CPAFieldName = measureList.First(x => x.MeasureBaseID == BaseMeasure.ACQ1_CPA).MeasureDisplayName,
-							CPRFieldName = measureList.First(x => x.MeasureBaseID == BaseMeasure.ACQ2_CPA).MeasureDisplayName
-						};
-						return response;
 					}
+
+					#endregion
+				}
+				catch (Exception ex)
+				{
+					throw new MobileApiException(String.Format("Failure in Campaign performance MDX, ex: {0}. SELECT='{1}', FROM='{2}'", ex.Message, selectClause, fromClause),
+																"Failed to generate Campaign performance report, please contact Support@edge.bi (Error: 'MDX').");
 				}
 			}
 		} 
