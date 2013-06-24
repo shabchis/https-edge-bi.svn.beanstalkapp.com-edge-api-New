@@ -57,6 +57,7 @@ namespace Edge.Api.Mobile.Performance
 					cmd.Parameters.AddWithValue("@SelectMDX", selectClause);
 					cmd.Parameters.AddWithValue("@FromMDX", fromClause);
 					cmd.Connection = connection;
+					cmd.CommandTimeout = GetSqlTimeout();
 
 					// execute MDX
 					using (var reader = cmd.ExecuteReader())
@@ -109,6 +110,8 @@ namespace Edge.Api.Mobile.Performance
 		public RoasPerformanceResponse GetRoasPerformance(int accountId, string from, string to, string themes, string countries)
 		{
 			var perfParam = new PerfromanceParams(accountId, from, to, themes, countries, PerformanceReportType.RoasPerformance);
+			perfParam.FromDate = new DateTime(perfParam.FromDate.Year, perfParam.FromDate.Month, 1); // from the beginning of the month
+
 			using (var connection = new SqlConnection(AppSettings.GetConnectionString("Edge.Core.Data.DataManager.Connection", "String")))
 			{
 				connection.Open();
@@ -152,6 +155,7 @@ namespace Edge.Api.Mobile.Performance
 					cmd.Parameters.AddWithValue("@SelectMDX", selectClause);
 					cmd.Parameters.AddWithValue("@FromMDX", fromClause);
 					cmd.Connection = connection;
+					cmd.CommandTimeout = GetSqlTimeout();
 
 					// execute MDX
 					using (var reader = cmd.ExecuteReader())
@@ -225,6 +229,7 @@ namespace Edge.Api.Mobile.Performance
 					cmd.Parameters.AddWithValue("@SelectMDX", selectClause);
 					cmd.Parameters.AddWithValue("@FromMDX", fromClause);
 					cmd.Connection = connection;
+					cmd.CommandTimeout = GetSqlTimeout();
 
 					// execute MDX
 					using (var reader = cmd.ExecuteReader())
@@ -308,6 +313,14 @@ namespace Edge.Api.Mobile.Performance
 				whereClause = String.Format("{{{0}}},", whereClause.Remove(0, 1));
 			}
 			return whereClause;
+		}
+
+		private int GetSqlTimeout()
+		{ 
+			int sqlTimeout;
+			if (!int.TryParse(AppSettings.Get("MobileApi", "SqlTimeout"), out sqlTimeout))
+				sqlTimeout = 60;
+			return sqlTimeout;
 		}
 		#endregion
 	}
