@@ -30,12 +30,22 @@ namespace Edge.Objects.Performance
 				throw new MobileApiException(String.Format("Wrong parameters format: dates=ddMMyyyy, lists=INTs seperated by comma, ex: {0}", ex.Message),
 											 "Failed to generate performance report, please contact Support@edge.bi (Error: 'Request parameters').");
 			}
+			// validate from < to 
+			if (FromDate > ToDate)
+				throw new MobileApiException(String.Format("From date {0} cannot be greater then to date {1}", FromDate.ToString("dd-MM-yyyy"), ToDate.ToString("dd-MM-yyyy")),
+											 String.Format("From date {0} cannot be greater then to date {1}. Please fix.", FromDate.ToString("dd-MM-yyyy"), ToDate.ToString("dd-MM-yyyy")));
+			// validate from <= Today
+			if (FromDate > DateTime.Now)
+				throw new MobileApiException(String.Format("Report cannot be executed for future dates (start date = {0}). Please fix.", FromDate.ToString("dd-MM-yyyy")),
+											 String.Format("Report cannot be executed for future dates (start date = {0}). Please fix.", FromDate.ToString("dd-MM-yyyy")));
+			
+			// validate time interval according to configuration
 			CheckTimeRange(reportType);
 		}
 
 		private void CheckTimeRange(PerformanceReportType reportType)
 		{
-			var maxTimerange = 0;
+			int maxTimerange;
 			if (int.TryParse(AppSettings.Get("MobileApi", String.Format("{0}MaxTimeInterval",reportType), false), out maxTimerange))
 			{
 				var daysDiff = ToDate.Subtract(FromDate).TotalDays;
