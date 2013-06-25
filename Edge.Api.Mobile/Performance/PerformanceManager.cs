@@ -39,7 +39,7 @@ namespace Edge.Api.Mobile.Performance
 												 String.Format("Your account {0} is not configured correctly, please contact Support@edge.bi (Error: 'Measures').", accountId));
 
 				// prepare SELECT and FROM
-				var selectClause = String.Format(@"SELECT NON EMPTY {{[Time Dim].[Time Dim].[Day]}} ON ROWS,( {{ [Measures].[Cost],[Measures].[Clicks],[Measures].[{0}], [Measures].[{1}],[Measures].[{2}],[Measures].[{3}]}} ) ON COLUMNS",
+				var selectClause = String.Format(@"SELECT NONEMPTY({{[Time Dim].[Time Dim].[Day]}}) ON ROWS,( {{ [Measures].[Cost],[Measures].[Clicks],[Measures].[{0}], [Measures].[{1}],[Measures].[{2}],[Measures].[{3}]}} ) ON COLUMNS",
 												measureList.First(x => x.MeasureBaseID == BaseMeasure.ACQ1).MdxFieldName,
 												measureList.First(x => x.MeasureBaseID == BaseMeasure.ACQ2).MdxFieldName,
 												measureList.First(x => x.MeasureBaseID == BaseMeasure.ACQ1_CPA).MdxFieldName,
@@ -238,7 +238,7 @@ namespace Edge.Api.Mobile.Performance
 												 String.Format("Your account {0} is not configured correctly, please contact Support@edge.bi (Error: 'Measures').", accountId));
 
 				// prepare SELECT and FROM
-				var selectClause = String.Format(@"SELECT NON EMPTY [Getways Dim].[Gateways].[Campaign].members ON ROWS,( {{ [Measures].[Cost],[Measures].[Clicks],[Measures].[{0}], [Measures].[{1}],[Measures].[{2}],[Measures].[{3}]}} ) ON COLUMNS",
+				var selectClause = String.Format(@"SELECT NONEMPTY([Getways Dim].[Gateways].[Campaign].members) ON ROWS,( {{ [Measures].[Cost],[Measures].[Clicks],[Measures].[{0}], [Measures].[{1}],[Measures].[{2}],[Measures].[{3}]}} ) ON COLUMNS",
 												measureList.First(x => x.MeasureBaseID == BaseMeasure.ACQ1).MdxFieldName,
 												measureList.First(x => x.MeasureBaseID == BaseMeasure.ACQ2).MdxFieldName,
 												measureList.First(x => x.MeasureBaseID == BaseMeasure.ACQ1_CPA).MdxFieldName,
