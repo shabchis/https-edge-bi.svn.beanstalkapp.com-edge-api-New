@@ -147,7 +147,7 @@ namespace Edge.Api.Mobile.Performance
 												 String.Format("Your account {0} is not configured correctly, please contact Support@edge.bi (Error: 'Measures').", accountId));
 
 				// prepare WITH, SELECT and FROM
-				var withClause = String.Format("WITH MEMBER [%ROAS] AS [Measures].[{0}]/ IIF([Measures].[Cost] = 0, NULL, [Measures].[Cost] ) * 100 ", measureList.First(x => x.IsDeposit).MdxFieldName);
+				var withClause = String.Format("WITH MEMBER [%ROAS] AS [Measures].[{0}]/ IIF([Measures].[Cost] = 0, \"\", [Measures].[Cost] ) * 100 ", measureList.First(x => x.IsDeposit).MdxFieldName);
 
 				var selectClause = String.Format(@"SELECT ClosingPeriod([Time Dim].[Time Dim].[Month], [Time Dim].[Time Dim].CurrentMember).Lag(12) : ClosingPeriod([Time Dim].[Time Dim].[Month], [Time Dim].[Time Dim].CurrentMember) ON ROWS, 
 												   ({{[Measures].[Cost],[Measures].[{0}],[%ROAS],[Measures].[{1}], [Measures].[{2}]}}) ON COLUMNS",
