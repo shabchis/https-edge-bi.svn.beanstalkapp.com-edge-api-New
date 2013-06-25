@@ -7,6 +7,7 @@ using System.Linq;
 using System.Xml.Linq;
 using Edge.Core.Configuration;
 using Edge.Core.Data;
+using Edge.Core.Utilities;
 using Edge.Objects;
 using Edge.Objects.Performance;
 
@@ -50,7 +51,8 @@ namespace Edge.Api.Mobile.Performance
 												perfParam.FromDate.ToString("yyyyMMdd"),
 												perfParam.ToDate.ToString("yyyyMMdd"),
 												GetWhereClause(perfParam.Themes, "Theme"),
-												GetWhereClause(perfParam.Countries, "Country")); 
+												GetWhereClause(perfParam.Countries, "Country"));
+				Log.Write("Mobile API", String.Format("Execute Daily MDX: SELECT='{0}', FROM='{1}'", selectClause, fromClause), LogMessageType.Debug);
 				#endregion
 
 				try
@@ -159,7 +161,8 @@ namespace Edge.Api.Mobile.Performance
 												perfParam.FromDate.ToString("yyyyMMdd"),
 												perfParam.ToDate.ToString("yyyyMMdd"),
 												GetWhereClause(perfParam.Themes, "Theme"),
-												GetWhereClause(perfParam.Countries, "Country")); 
+												GetWhereClause(perfParam.Countries, "Country"));
+				Log.Write("Mobile API", String.Format("Execute ROAS MDX: WITH='{2}', SELECT='{0}', FROM='{1}'", selectClause, fromClause, withClause), LogMessageType.Debug);
 				#endregion
 
 				try
@@ -247,7 +250,8 @@ namespace Edge.Api.Mobile.Performance
 												perfParam.FromDate.ToString("yyyyMMdd"),
 												perfParam.ToDate.ToString("yyyyMMdd"),
 												GetWhereClause(perfParam.Themes, "Theme"),
-												GetWhereClause(perfParam.Countries, "Country")); 
+												GetWhereClause(perfParam.Countries, "Country"));
+				Log.Write("Mobile API", String.Format("Execute Campaign MDX: SELECT='{0}', FROM='{1}'", selectClause, fromClause), LogMessageType.Debug);
 				#endregion
 
 				try
