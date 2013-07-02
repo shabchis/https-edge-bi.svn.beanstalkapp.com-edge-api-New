@@ -50,7 +50,10 @@ namespace Edge.Api.Mobile.Settings
 					using (var reader = sqlCommand.ExecuteReader())
 					{
 						while (reader.Read())
-							list.Add(new SegmentInfo { Id = int.Parse(reader["Account_ID"].ToString()), Name = reader["Account_Name"].ToString() });
+						{
+							if (reader["Value"].ToString() == "1")
+								list.Add(new SegmentInfo { Id = int.Parse(reader["Account_ID"].ToString()), Name = reader["Account_Name"].ToString() });
+						}
 					}
 				}
 			}
