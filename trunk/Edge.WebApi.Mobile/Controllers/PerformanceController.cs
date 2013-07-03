@@ -24,6 +24,15 @@ namespace Edge.WebApi.Mobile.Controllers
 				var manager = GetManager();
 				var responce = manager.GetPerformance(accountId, from, to, theme, country);
 				Log.Write("Mobile API", String.Format("Finished Daily performance report request. Response contains {0} records", responce.PerformanceList.Count), LogMessageType.Debug);
+				if (responce.PerformanceList.Count == 0)
+				{
+					return new DailyPerformanceResponse
+					{
+						HasError = true,
+						ErrorMsg = "No data found",
+						DisplayError = "No data found for Daily performance report. Please refine report parameters."
+					};
+				}
 				return responce;
 			}
 			catch (Exception ex)
@@ -51,6 +60,15 @@ namespace Edge.WebApi.Mobile.Controllers
 				var manager = GetManager();
 				var responce = manager.GetRoasPerformance(accountId, from, to, theme, country);
 				Log.Write("Mobile API", String.Format("Finished ROAS performance report request. Response contains {0} records", responce.PerformanceList.Count), LogMessageType.Debug);
+				if (responce.PerformanceList.Count == 0)
+				{
+					return new RoasPerformanceResponse
+					{
+						HasError = true,
+						ErrorMsg = "No data found",
+						DisplayError = "No data found for ROAS performance report. Please refine report parameters."
+					};
+				}
 				return responce;
 			}
 			catch (Exception ex)
@@ -77,7 +95,15 @@ namespace Edge.WebApi.Mobile.Controllers
 				var manager = GetManager();
 				var responce = manager.GetCampaignPerformance(accountId, from, to, theme, country);
 				Log.Write("Mobile API", String.Format("Finished Campaign performance report request. Response contains {0} records", responce.PerformanceList.Count), LogMessageType.Debug);
-				return responce;
+				if (responce.PerformanceList.Count == 0)
+				{
+					return new CampaignPerformanceResponse
+					{
+						HasError = true,
+						ErrorMsg = "No data found",
+						DisplayError = "No data found for Campaing performance report. Please refine report parameters."
+					};
+				} return responce;
 			}
 			catch (Exception ex)
 			{

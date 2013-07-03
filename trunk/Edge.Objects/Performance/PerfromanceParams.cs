@@ -35,9 +35,9 @@ namespace Edge.Objects.Performance
 				throw new MobileApiException(String.Format("From date {0} cannot be greater then to date {1}", FromDate.ToString("dd-MM-yyyy"), ToDate.ToString("dd-MM-yyyy")),
 											 String.Format("From date {0} cannot be greater then to date {1}. Please fix.", FromDate.ToString("dd-MM-yyyy"), ToDate.ToString("dd-MM-yyyy")));
 			// validate from <= Today
-			if (FromDate > DateTime.Now)
-				throw new MobileApiException(String.Format("Report cannot be executed for future dates (start date = {0}). Please fix.", FromDate.ToString("dd-MM-yyyy")),
-											 String.Format("Report cannot be executed for future dates (start date = {0}). Please fix.", FromDate.ToString("dd-MM-yyyy")));
+			if (FromDate > DateTime.Now || ToDate > DateTime.Now)
+				throw new MobileApiException(String.Format("Report cannot be executed for future dates (start date = {0}, end date = {1}). Please fix.", FromDate.ToString("dd-MM-yyyy"), ToDate.ToString("dd-MM-yyyy")),
+											 String.Format("Report cannot be executed for future dates (start date = {0}, end date = {1}). Please fix.", FromDate.ToString("dd-MM-yyyy"), ToDate.ToString("dd-MM-yyyy")));
 			
 			// validate time interval according to configuration
 			CheckTimeRange(reportType);
