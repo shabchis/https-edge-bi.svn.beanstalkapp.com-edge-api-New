@@ -98,8 +98,8 @@ namespace Edge.Api.Mobile.Performance
 							response.PerformanceStatistics.Add(PerformanceStatisticsKeys.TotalCost, Math.Round(response.PerformanceList.Select(x => x.Cost).Sum(), 0));
 							response.PerformanceStatistics.Add(PerformanceStatisticsKeys.TotalAcq1, Math.Round(response.PerformanceList.Select(x => x.Acq1).Sum(), 0));
 							response.PerformanceStatistics.Add(PerformanceStatisticsKeys.TotalAcq2, Math.Round(response.PerformanceList.Select(x => x.Acq2).Sum(), 0));
-							response.PerformanceStatistics.Add(PerformanceStatisticsKeys.TotalCPA, Math.Round(response.PerformanceList.Select(x => x.Cost).Sum() / response.PerformanceList.Select(x => x.Acq1).Sum()));
-							response.PerformanceStatistics.Add(PerformanceStatisticsKeys.TotalCPR, Math.Round(response.PerformanceList.Select(x => x.Cost).Sum() / response.PerformanceList.Select(x => x.Acq2).Sum()));
+							response.PerformanceStatistics.Add(PerformanceStatisticsKeys.TotalCPA, response.PerformanceList.Select(x => x.Acq1).Sum() > 0 ? Math.Round(response.PerformanceList.Select(x => x.Cost).Sum() / response.PerformanceList.Select(x => x.Acq1).Sum()) : 0);
+							response.PerformanceStatistics.Add(PerformanceStatisticsKeys.TotalCPR, response.PerformanceList.Select(x => x.Acq2).Sum() > 0 ? Math.Round(response.PerformanceList.Select(x => x.Cost).Sum() / response.PerformanceList.Select(x => x.Acq2).Sum()) : 0);
 
 							response.PerformanceStatistics.Add(PerformanceStatisticsKeys.AvgClicks, response.PerformanceList.Count > 0 ? Math.Round(response.PerformanceList.Select(x => x.Clicks).Average(), 0) : 0);
 							response.PerformanceStatistics.Add(PerformanceStatisticsKeys.AvgCost, response.PerformanceList.Count > 0 ? Math.Round(response.PerformanceList.Select(x => x.Cost).Average(), 0) : 0);
