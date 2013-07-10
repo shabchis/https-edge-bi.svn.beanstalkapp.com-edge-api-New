@@ -96,5 +96,10 @@ namespace Edge.Api.Mobile.Performance
 			};
 			return response;
 		}
+
+		public CampaignPerformanceResponse GetCountryPerformance(int accountId, string fromDate, string toDate, string themes, string countries)
+		{
+			return GetCampaignPerformance(accountId, fromDate, toDate, themes, countries);
+		}
 	}
 }
