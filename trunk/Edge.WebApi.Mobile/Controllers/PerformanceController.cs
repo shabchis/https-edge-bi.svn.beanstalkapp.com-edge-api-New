@@ -118,6 +118,41 @@ namespace Edge.WebApi.Mobile.Controllers
 			}
 		}
 
+		[ActionName("CountryPerformance")]
+		public CampaignPerformanceResponse GetCountryPerformance(string sessionId, int accountId, string from, string to, string theme = "", string country = "")
+		{
+			try
+			{
+				ValidatePermission(ValidateSession(sessionId), accountId);
+
+				Log.Write("Mobile API", String.Format("Country performance report request. Parameters: account={0}, from={1}, to={2}, theme={3}, country={4}", accountId, from, to, theme, country), LogMessageType.Debug);
+				var manager = GetManager();
+				var responce = manager.GetCountryPerformance(accountId, from, to, theme, country);
+				Log.Write("Mobile API", String.Format("Finished Country performance report request. Response contains {0} records", responce.PerformanceList.Count), LogMessageType.Debug);
+				if (responce.PerformanceList.Count == 0)
+				{
+					return new CampaignPerformanceResponse
+					{
+						HasError = true,
+						ErrorMsg = "No data found",
+						DisplayError = "No data found for Country performance report. Please refine report parameters."
+					};
+				} return responce;
+			}
+			catch (Exception ex)
+			{
+				Log.Write("Mobile API", String.Format("Country performance report failed, ex: {0}. Parameters: account={1}, from={2}, to={3}, theme={4}, country={5}",
+										ex.Message, accountId, from, to, theme, country), LogMessageType.Error);
+				return new CampaignPerformanceResponse
+				{
+					HasError = true,
+					ErrorMsg = ex.Message,
+					DisplayError = (ex is MobileApiException) ? (ex as MobileApiException).DisplayMessage : "Failed to generate Country performance report, please contact Support@edge.bi (Error: 'General')."
+				};
+			}
+		}
+
+
 		#region Private Methods
 		private IPerformanceManager GetManager()
 		{

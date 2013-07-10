@@ -307,7 +307,98 @@ namespace Edge.Api.Mobile.Performance
 																"Failed to generate Campaign performance report, please contact Support@edge.bi (Error: 'MDX').");
 				}
 			}
-		} 
+		}
+
+		public CampaignPerformanceResponse GetCountryPerformance(int accountId, string from, string to, string themes, string countries)
+		{
+			var perfParam = new PerfromanceParams(accountId, from, to, themes, countries, PerformanceReportType.CountryPerformance);
+			using (var connection = new SqlConnection(AppSettings.GetConnectionString("Edge.Core.Data.DataManager.Connection", "String")))
+			{
+				connection.Open();
+
+				#region Prepare MDX
+				// get cube name and relevant measure config for preparing MDX command
+				var cubeName = GetAccountCubeName(accountId, connection);
+				if (String.IsNullOrWhiteSpace(cubeName))
+					throw new MobileApiException(String.Format("Cannot retrieve cube name for account {0}", accountId),
+												 String.Format("Your account {0} is not configured correctly, please contact Support@edge.bi (Error: 'Cube').", accountId));
+
+				var measureList = GetMeasures(accountId, connection);
+				if (measureList.Count == 0 || measureList.Any(x => String.IsNullOrEmpty(x.MdxFieldName)))
+					throw new MobileApiException(String.Format("Measures are not defined properly for account {0}, check if MDX name is defined", accountId),
+												 String.Format("Your account {0} is not configured correctly, please contact Support@edge.bi (Error: 'Measures').", accountId));
+
+				// prepare SELECT and FROM
+				var selectClause = String.Format(@"SELECT NONEMPTY([Getways Dim].[Countries].members) ON ROWS,( {{ [Measures].[Cost],[Measures].[Clicks],[Measures].[{0}], [Measures].[{1}],[Measures].[{2}],[Measures].[{3}]}} ) ON COLUMNS",
+												measureList.First(x => x.MeasureBaseID == BaseMeasure.ACQ1).MdxFieldName,
+												measureList.First(x => x.MeasureBaseID == BaseMeasure.ACQ2).MdxFieldName,
+												measureList.First(x => x.MeasureBaseID == BaseMeasure.ACQ1_CPA).MdxFieldName,
+												measureList.First(x => x.MeasureBaseID == BaseMeasure.ACQ2_CPA).MdxFieldName);
+
+				var fromClause = String.Format(@"FROM [{0}] WHERE ([Accounts Dim].[Accounts].[Account].&[{1}],{4}{5}{{[Time Dim].[DayCode].&[{2}]:[Time Dim].[DayCode].&[{3}]}})",
+												cubeName,
+												accountId,
+												perfParam.FromDate.ToString("yyyyMMdd"),
+												perfParam.ToDate.ToString("yyyyMMdd"),
+												GetWhereClause(perfParam.Themes, "Theme"),
+												GetWhereClause(perfParam.Countries, "Country"));
+				Log.Write("Mobile API", String.Format("Execute Country MDX: SELECT='{0}', FROM='{1}'", selectClause, fromClause), LogMessageType.Debug);
+				#endregion
+
+				try
+				{
+					#region Execute MDX
+
+					using (var cmd = DataManager.CreateCommand("SP_ExecuteMDX", CommandType.StoredProcedure))
+					{
+						cmd.Parameters.AddWithValue("@WithMDX", " ");
+						cmd.Parameters.AddWithValue("@SelectMDX", selectClause);
+						cmd.Parameters.AddWithValue("@FromMDX", fromClause);
+						cmd.Connection = connection;
+						cmd.CommandTimeout = GetSqlTimeout();
+
+						// execute MDX
+						using (var reader = cmd.ExecuteReader())
+						{
+							var list = new List<CampaignPerformance>();
+							while (reader.Read())
+							{
+								var performance = new CampaignPerformance
+								{
+									CampaignName = reader[0] != DBNull.Value ? reader[0].ToString() : String.Empty,
+									Cost = reader[1] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[1]), 0) : 0,
+									Clicks = reader[2] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[2]), 0) : 0,
+									Acq1 = reader[3] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[3]), 0) : 0,
+									Acq2 = reader[4] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[4]), 0) : 0,
+									CPA = reader[5] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[5]), 0) : 0,
+									CPR = reader[6] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[6]), 0) : 0,
+								};
+								// add perfrmance to list only if it has at least ont value
+								if (performance.Cost > 0 || performance.Clicks > 0 || performance.Acq1 > 0 || performance.Acq2 > 0 ||
+									performance.CPA > 0 || performance.CPR > 0)
+									list.Add(performance);
+							}
+							var response = new CampaignPerformanceResponse
+							{
+								PerformanceList = list,
+								Acq1FieldName = measureList.First(x => x.MeasureBaseID == BaseMeasure.ACQ1).MeasureDisplayName,
+								Acq2FieldName = measureList.First(x => x.MeasureBaseID == BaseMeasure.ACQ2).MeasureDisplayName,
+								CPAFieldName = measureList.First(x => x.MeasureBaseID == BaseMeasure.ACQ1_CPA).MeasureDisplayName,
+								CPRFieldName = measureList.First(x => x.MeasureBaseID == BaseMeasure.ACQ2_CPA).MeasureDisplayName
+							};
+							return response;
+						}
+					}
+
+					#endregion
+				}
+				catch (Exception ex)
+				{
+					throw new MobileApiException(String.Format("Failure in Country performance MDX, ex: {0}. SELECT='{1}', FROM='{2}'", ex.Message, selectClause, fromClause),
+																"Failed to generate Country performance report, please contact Support@edge.bi (Error: 'MDX').");
+				}
+			}
+		}
 		#endregion
 
 		#region Private Methods

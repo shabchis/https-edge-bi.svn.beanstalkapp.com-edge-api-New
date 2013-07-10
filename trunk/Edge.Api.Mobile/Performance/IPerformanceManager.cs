@@ -12,5 +12,6 @@ namespace Edge.Api.Mobile.Performance
 		DailyPerformanceResponse GetPerformance(int accountId, string fromDate, string toDate, string themes, string countries);
 		RoasPerformanceResponse GetRoasPerformance(int accountId, string fromDate, string toDate, string themes, string countries);
 		CampaignPerformanceResponse GetCampaignPerformance(int accountId, string fromDate, string toDate, string themes, string countries);
+		CampaignPerformanceResponse GetCountryPerformance(int accountId, string fromDate, string toDate, string themes, string countries);
 	}
 }

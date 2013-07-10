@@ -4,6 +4,7 @@
 	{
 		DailyPerformance,
 		RoasPerformance,
-		CampaignPerformance
+		CampaignPerformance, 
+		CountryPerformance
 	}
 }
