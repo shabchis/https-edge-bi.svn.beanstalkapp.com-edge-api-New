@@ -374,8 +374,9 @@ namespace Edge.Api.Mobile.Performance
 									CPR = reader[6] != DBNull.Value ? Math.Round(Convert.ToDouble(reader[6]), 0) : 0,
 								};
 								// add perfrmance to list only if it has at least ont value
-								if (performance.Cost > 0 || performance.Clicks > 0 || performance.Acq1 > 0 || performance.Acq2 > 0 ||
-									performance.CPA > 0 || performance.CPR > 0)
+								if (!String.IsNullOrEmpty(performance.CampaignName) &&
+									(performance.Cost > 0 || performance.Clicks > 0 || performance.Acq1 > 0 || performance.Acq2 > 0 ||
+									performance.CPA > 0 || performance.CPR > 0))
 									list.Add(performance);
 							}
 							var response = new CampaignPerformanceResponse
