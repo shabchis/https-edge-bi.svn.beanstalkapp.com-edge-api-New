@@ -375,6 +375,7 @@ namespace Edge.Api.Mobile.Performance
 								};
 								// add perfrmance to list only if it has at least ont value
 								if (!String.IsNullOrEmpty(performance.CampaignName) &&
+									list.All(x => x.CampaignName != performance.CampaignName) &&
 									(performance.Cost > 0 || performance.Clicks > 0 || performance.Acq1 > 0 || performance.Acq2 > 0 ||
 									performance.CPA > 0 || performance.CPR > 0))
 									list.Add(performance);
