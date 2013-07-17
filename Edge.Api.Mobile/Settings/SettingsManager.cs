@@ -51,7 +51,7 @@ namespace Edge.Api.Mobile.Settings
 					{
 						while (reader.Read())
 						{
-							if (reader["Value"].ToString() == "True")
+							if (reader["Value"].ToString() == "True" || reader["Value"].ToString() == "1")
 								list.Add(new SegmentInfo { Id = int.Parse(reader["Account_ID"].ToString()), Name = reader["Account_Name"].ToString() });
 						}
 					}

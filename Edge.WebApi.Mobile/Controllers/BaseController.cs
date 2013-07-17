@@ -11,7 +11,7 @@ namespace Edge.WebApi.Mobile.Controllers
 		protected static int ValidateSession(string sessionId)
 		{
 			if (AppSettings.Get("MobileApi", "ValidateSession", false) == "false")
-				return 178;
+				return 105;
 
 			int userId;
 			ApplicationType appType;

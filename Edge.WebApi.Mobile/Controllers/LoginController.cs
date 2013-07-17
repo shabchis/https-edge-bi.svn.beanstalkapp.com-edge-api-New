@@ -17,7 +17,7 @@ namespace Edge.WebApi.Mobile.Controllers
 		{
 			// no permission validation if configured 
 			if (AppSettings.Get("MobileApi", "ValidateSession", false) == "false")
-				return new ExtendedSessionResponseData { UserID = 178, Session = "aaa" };
+				return new ExtendedSessionResponseData { UserID = 105, Session = "aaa" };
 
 			var sessionData = new SessionRequestData
 				{
