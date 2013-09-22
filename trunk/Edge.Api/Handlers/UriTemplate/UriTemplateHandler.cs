@@ -109,7 +109,7 @@ namespace Edge.Api.Handlers.Template
 			}
 
 			if (foundMethod == null || foundMatch == null)
-				throw new UriTemplateException("method not exist", context.Request.Url.PathAndQuery, HttpStatusCode.NotFound);
+				throw new UriTemplateException("There is no method set up to handle the specified path.", context.Request.Url.PathAndQuery, HttpStatusCode.NotFound);
 
 			// Build a list of method arguments
 			ParameterInfo[] methodParams = foundMethod.GetParameters();

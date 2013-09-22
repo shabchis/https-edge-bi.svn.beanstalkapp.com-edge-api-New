@@ -9,13 +9,8 @@ namespace Edge.Api.Handlers.Template
 	[Serializable]
 	public class UriTemplateException : HttpStatusException
 	{
-		public UriTemplateException(string paramName, HttpStatusCode httpStatusCode) :
-			this("Parameter mismatch.", paramName, httpStatusCode)
-		{
-		}
-
-		public UriTemplateException(string message, string paramName, HttpStatusCode httpStatusCode) :
-			base(message + "\nParameter: " + paramName, httpStatusCode)
+		public UriTemplateException(string message, string path, HttpStatusCode httpStatusCode) :
+			base(message + "\nPath: " + path, httpStatusCode)
 		{
 		}
 	}
